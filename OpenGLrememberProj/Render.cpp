@@ -20,7 +20,7 @@
 #include "bass.h"
 #pragma comment (lib, "bass.lib")
 
-GLdouble maxHeight = 30.0;
+GLfloat maxHeight = 30.0;
 bool operatorMode = false;
 bool gameStarted = true;
 bool fogMode = true;
@@ -32,29 +32,22 @@ bool lightLockMode = false;
 class CustomCamera : public Camera {
 public:
 	// Дистанция камеры
-	double camDist;
+	float camDist;
 	// Углы поворота камеры
-	double fi1, fi2;
+	float fi1, fi2;
 
 	// Значния камеры по умолчанию
 	CustomCamera() {
-		camDist = maxHeight + 20.0;
-		fi1 = M_PI / 180.0 * -90.0;
-		fi2 = M_PI / 180.0 * 45.0;
+		camDist = maxHeight + 20.0f;
+		fi1 = M_PI / 180.0f * -90.0f;
+		fi2 = M_PI / 180.0f * 45.0f;
 	}
 
 	// Считает позицию камеры, исходя из углов поворота, вызывается движком
 	void SetUpCamera() {
-		// Отвечает за поворот камеры мышкой
-		lookPoint.setCoords(0.0, 0.0, maxHeight);
-
-		pos.setCoords(camDist * cos(fi2) * cos(fi1),
-					  camDist * cos(fi2) * sin(fi1),
-					  camDist * sin(fi2));
-
-		if (cos(fi2) <= 0) {
-			normal.setCoords(0, 0, -1);
-		} else normal.setCoords(0, 0, 1);
+		if (cos(fi2) <= 0.0f) {
+			normal.setCoords(0.0f, 0.0f, -1.0f);
+		} else normal.setCoords(0.0f, 0.0f, 1.0f);
 
 		LookAt();
 	}
@@ -69,138 +62,112 @@ public:
 class CustomLight : public Light {
 public:
 	CustomLight() {
-		// начальная позиция света
 		pos = Vector3(0.0, 0.0, 0.0);
 	}
 
-	// рисует сферу и линии под источником света, вызывается движком
 	void DrawLightGhismo() {
-		//glDisable(GL_FOG);
-		//glDisable(GL_LIGHTING);
-		//glDisable(GL_TEXTURE_2D);
-		//glColor3d(1.0, 1.0, 0.0);
 
-		//Sphere sphere;
-		//sphere.pos = pos;
-		//sphere.scale = sphere.scale * 10.0;
-		//sphere.Show();
-
-		//fogMode ? glEnable(GL_FOG) : glDisable(GL_FOG);
-		//lightMode ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
-		//textureMode ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
 	}
 
 	void SetUpLight() {
-		GLfloat ambient[] = { 0.2, 0.2, 0.2, 0.0 };
-		GLfloat diffuse[] = { 1.0, 1.0, 1.0, 0.0 };
-		GLfloat specular[] = { 0.7, 0.7, 0.7, 0.0 };
-		GLfloat position[] = { pos.X(), pos.Y(), pos.Z(), 1.0 };
+		GLfloat ambient[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+		GLfloat specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
-		// параметры источника света
-		glLightfv(GL_LIGHT0, GL_POSITION, position);
-		// характеристики излучаемого света
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient); // фоновое освещение (рассеянный свет)
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse); // диффузная составляющая света
-		glLightfv(GL_LIGHT0, GL_SPECULAR, specular); // зеркально отражаемая составляющая света
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
 
 		glEnable(GL_LIGHT0);
 	}
 } light; // Создаем источник света
 
 //===========================================
+struct Material {
+	GLfloat ambient;
+	GLfloat diffuse;
+	GLfloat specular;
+	GLfloat shininess;
+};
+
 struct BiomeParams {
 	GLuint biomeId;
-	GLdouble minAltitude;
-	GLdouble maxAltitude;
-	GLdouble scale;
+	GLfloat minAltitude;
+	GLfloat maxAltitude;
+	GLfloat scale;
 };
 
 class TriangularSquare_withNormals {
 private:
-	void calculateNormal(double *firstPoint, double *secondPoint, double *resultNormal) {
-		double x_1 = firstPoint[0];
-		double y_1 = firstPoint[1];
-		double z_1 = firstPoint[2];
+	void calculateNormal(float *firstPoint, GLfloat *secondPoint, GLfloat *resultNormal) {
+		float x_1 = firstPoint[0];
+		float y_1 = firstPoint[1];
+		float z_1 = firstPoint[2];
 
-		double x_2 = secondPoint[0];
-		double y_2 = secondPoint[1];
-		double z_2 = secondPoint[2];
+		float x_2 = secondPoint[0];
+		float y_2 = secondPoint[1];
+		float z_2 = secondPoint[2];
 
-		double x_3 = center[0];
-		double y_3 = center[1];
-		double z_3 = center[2];
+		float x_3 = center[0];
+		float y_3 = center[1];
+		float z_3 = center[2];
 
-		double line_1[] = { x_2 - x_1, y_2 - y_1, z_2 - z_1 };
-		double line_2[] = { x_2 - x_3, y_2 - y_3, z_2 - z_3 };
+		float line_1[] = { x_2 - x_1, y_2 - y_1, z_2 - z_1 };
+		float line_2[] = { x_2 - x_3, y_2 - y_3, z_2 - z_3 };
 
-		double n_x = line_1[1] * line_2[2] - line_2[1] * line_1[2];
-		double n_y = line_1[0] * line_2[2] - line_2[0] * line_1[2];
-		double n_z = line_1[0] * line_2[1] - line_2[0] * line_1[1];
+		float n_x = line_1[1] * line_2[2] - line_2[1] * line_1[2];
+		float n_y = line_1[0] * line_2[2] - line_2[0] * line_1[2];
+		float n_z = line_1[0] * line_2[1] - line_2[0] * line_1[1];
 
-		double length = sqrt(pow(n_x, 2.0) + pow(n_y, 2.0) + pow(n_z, 2.0));
+		float length = sqrt(pow(n_x, 2.0) + pow(n_y, 2.0) + pow(n_z, 2.0));
 		resultNormal[0] = n_x / length;
 		resultNormal[1] = -n_y / length;
 		resultNormal[2] = n_z / length;
 	}
 
 public:
-	GLdouble lowerLeft[3];
-	GLdouble lowerRight[3];
-	GLdouble upperRight[3];
-	GLdouble upperLeft[3];
-	GLdouble center[3];
+	GLfloat lowerLeft[3];
+	GLfloat lowerRight[3];
+	GLfloat upperRight[3];
+	GLfloat upperLeft[3];
+	GLfloat center[3];
 
-	GLdouble lowerTriangleNormal[3];
-	GLdouble rightTriangleNormal[3];
-	GLdouble upperTriangleNormal[3];
-	GLdouble leftTriangleNormal[3];
+	GLfloat lowerTriangleNormal[3];
+	GLfloat rightTriangleNormal[3];
+	GLfloat upperTriangleNormal[3];
+	GLfloat leftTriangleNormal[3];
 
-	//GLuint textureId;
-	//GLdouble color[3];
-
-	void setLowerLeft(GLdouble x, GLdouble y, GLdouble z) {
+	void setLowerLeft(GLfloat x, GLfloat y, GLfloat z) {
 		lowerLeft[0] = x;
 		lowerLeft[1] = y;
 		lowerLeft[2] = z;
 	}
 
-	void setLowerRight(GLdouble x, GLdouble y, GLdouble z) {
+	void setLowerRight(GLfloat x, GLfloat y, GLfloat z) {
 		lowerRight[0] = x;
 		lowerRight[1] = y;
 		lowerRight[2] = z;
 	}
 
-	void setUpperRight(GLdouble x, GLdouble y, GLdouble z) {
+	void setUpperRight(GLfloat x, GLfloat y, GLfloat z) {
 		upperRight[0] = x;
 		upperRight[1] = y;
 		upperRight[2] = z;
 	}
 
-	void setUpperLeft(GLdouble x, GLdouble y, GLdouble z) {
+	void setUpperLeft(GLfloat x, GLfloat y, GLfloat z) {
 		upperLeft[0] = x;
 		upperLeft[1] = y;
 		upperLeft[2] = z;
 	}
 
 	void calculateCenter() {
-		center[0] = (lowerLeft[0] + upperRight[0]) / 2.0;
-		center[1] = (lowerLeft[1] + upperRight[1]) / 2.0;
-		center[2] = (lowerLeft[2] + lowerRight[2] + upperRight[2] + upperLeft[2]) / 4.0;
+		center[0] = (lowerLeft[0] + upperRight[0]) / 2.0f;
+		center[1] = (lowerLeft[1] + upperRight[1]) / 2.0f;
+		center[2] = (lowerLeft[2] + lowerRight[2] + upperRight[2] + upperLeft[2]) / 4.0f;
 	}
 
-	double getCenterCoord_Z() {
+	float getCenterCoord_Z() {
 		return center[2];
 	}
-
-	//void setTexture(GLuint textureId) {
-		//this->textureId = textureId;
-	//}
-
-	//void setColor(GLdouble red, GLdouble green, GLdouble blue) {
-		//color[0] = red;
-		//color[1] = green;
-		//color[2] = blue;
-	//}
 
 	void calculateNormals() {
 		calculateNormal(lowerLeft, lowerRight, lowerTriangleNormal);
@@ -213,20 +180,21 @@ public:
 class Chunk {
 public:
 	std::vector <TriangularSquare_withNormals> chunkPolygons;
-	std::vector <GLdouble> rightSide_EndCoords;
-	std::vector <GLdouble> upperSide_EndCoords;
+	std::vector <GLfloat> rightSide_EndCoords;
+	std::vector <GLfloat> upperSide_EndCoords;
 
 	std::vector <GLuint> heightIds;
 	std::vector <GLuint> textureIds;
-	std::vector <std::vector <GLdouble>> colors;
+	std::vector <Material> materialIds;
+	std::vector <std::vector <GLfloat>> colors;
 
 	Chunk() {
 
 	}
 
 	Chunk(std::vector <TriangularSquare_withNormals> chunkPolygons,
-		  std::vector <GLdouble> rightSide_EndCoords,
-		  std::vector <GLdouble> upperSide_EndCoords) {
+		  std::vector <GLfloat> rightSide_EndCoords,
+		  std::vector <GLfloat> upperSide_EndCoords) {
 		this->chunkPolygons = chunkPolygons;
 		this->rightSide_EndCoords = rightSide_EndCoords;
 		this->upperSide_EndCoords = upperSide_EndCoords;
@@ -234,7 +202,7 @@ public:
 };
 
 struct Ring {
-	double speed, size, x, y, z;
+	float speed, size, x, y, z;
 	DWORD64 deadMSeconds;
 };
 std::vector<Ring *> rings;
@@ -242,42 +210,53 @@ std::vector<Ring *> rings;
 class Biome {
 public:
 	std::vector <Chunk> chunks;
-	std::vector <std::vector <GLdouble>> currentBiome_EndCoords;
-	std::vector <std::vector <GLdouble>> previousBiome_EndCoords;
+	std::vector <std::vector <GLfloat>> currentBiome_EndCoords;
+	std::vector <std::vector <GLfloat>> previousBiome_EndCoords;
 	BiomeParams biomeParams;
 };
 
-std::atomic<bool> start_new { true };
-std::atomic<bool> thread_done { false };
+// Параметры для потока
+std::atomic<bool> start_new { true };		// Указывает, когда начинать генерировать новый биом
+std::atomic<bool> thread_done { false };	// Указывает, когда новый биом сгенерирован
 
-// Какая-то ***** параметры
-ObjFile airPlaneModel, moonModel;
-int translateIndexator = 0;
-int currentBiomeId = 0;
-int currentBiomeLength = 0;
-bool manualControl = false;
-double backgroundColor = 0.0;
-GLdouble prevAirPlaneTranslation[3];
-GLdouble airPlaneTranslation[3] = { 0.0, 0.0, maxHeight };
+// Параметры контроля и управления самолетом
+GLint torusScore = 0;					// счетчик собранных колец								(Do not touch)
+GLint viewMode = 2;						// вид на самолет: от кабины, с хвоста, по умолчанию	(Do not touch)
+GLfloat pointToFly[2];					// точка, к которой должен лететь самолет				(Do not touch)
+GLfloat savedAnimStatus = 0.0;			// сохраняет статус анимации							(Do not touch)
+GLboolean isControlSwitched = false;	// определение переключения режима управления			(Do not touch)
+GLboolean isReadyToControl = true;		// уведомляет о готовности передать контроль			(Do not touch)
+GLboolean manualControl = false;		// режим управления самолетом							(Do not touch)
+GLfloat airPlaneTranslation[3];			// текущие координаты самолета							(Do not touch)
+GLfloat prevAirPlaneTranslation[3];		// предыдущие координаты самолета						(Do not touch)
+
+// Дополнительные параметры
+ObjFile airPlaneModel, moonModel;	// Do not touch
+bool isMusicStoped = false;			// Do not touch
+int translateIndexator;				// Do not touch
+int currentBiomeId;					// ID текущего биома (Do not touch)
+int currentBiomeLength;				// Количество биомов данного типа (Do not touch)
+float backgroundColor;				// Do not touch
+float sunColor[3];					// Do not touch
 
 // Параметры отрисовываемой области (лучше не трогать)
-const GLint visibleBiomeHeight = 2;
-const GLint visibleBiomeWidth = 2 * visibleBiomeHeight + 1;
+const GLint visibleBiomeHeight = 2;							// Default: 2
+const GLint visibleBiomeWidth = 2 * visibleBiomeHeight + 1; // Default: 2 * visibleBiomeHeight + 1
 // Быстрое переключение, работает, если quickMultiplier > 1
 // Автоматически определяет значения для:
 // polygonSize, polygonNumberPerSide, polygonNumberInChunk, BiomeParams.scale
 const GLint quickMultiplier = 7;
-GLdouble polygonSize = pow(2, -1);				// HD = -1	: stable = 0	: no_lag = 1
+GLfloat polygonSize = pow(2, -1);				// HD = -1	: stable = 0	: no_lag = 1
 GLint polygonNumberPerSide = (int) pow(2, 8);	// HD = 8	: stable = 7	: no_lag = 6
-GLint polygonNumberInChunk = (int) pow(polygonNumberPerSide, 2); // do not touch
+GLint polygonNumberInChunk = (int) pow(polygonNumberPerSide, 2); // Do not touch
 
-// Уровни покровов
-const GLdouble waterLevel = 0.0;
-const GLdouble groundLevel = 5.0;
-const GLdouble stoneLevel = 20.0;
-const GLdouble snowLevel = 25.0;
+// Уровни покровов (можно потрогать)
+const GLfloat waterLevel = 0.0;		// Уровень воды
+const GLfloat groundLevel = 5.0;	// Уровень земли (трава, песок, снег)
+const GLfloat stoneLevel = 20.0;	// Уровень камня
+const GLfloat snowLevel = 25.0;		// Уровень снежных шапок
 
-// Быстрое переключение, работает, если quickMultiplier > 3
+// Быстрое переключение, работает, если quickMultiplier > 3 (можно потрогать)
 std::vector<BiomeParams> biomeParams = {
 	{ 0, -5.0,			waterLevel,		2 },	// море
 	{ 1, waterLevel,	groundLevel,	2 },	// равнина (земляная)
@@ -306,21 +285,30 @@ const std::string textureNames[] = {
 };
 GLuint textures[sizeof(textureNames) / sizeof(std::string)];
 
-// Цвета
-const std::vector <std::vector <GLdouble>> colors = {
-	{ 0.42, 0.48, 0.97 },	// 0 - water
-	{ 0.47, 0.68, 0.33 },	// 1 - grass
-	{ 0.94, 0.98, 0.98 },	// 2 - snow
-	{ 0.86, 0.83, 0.63 },	// 3 - sand
-	{ 0.49, 0.49, 0.49 }	// 4 - stone
+// Цвета (можно потрогать)
+const std::vector <std::vector <GLfloat>> colors = {
+	{ 0.42, 0.48, 0.97 },	// 0 - water, Default { 0.42, 0.48, 0.97 }
+	{ 0.47, 0.68, 0.33 },	// 1 - grass, Default { 0.47, 0.68, 0.33 }
+	{ 0.94, 0.98, 0.98 },	// 2 - snow,  Default { 0.94, 0.98, 0.98 }
+	{ 0.86, 0.83, 0.63 },	// 3 - sand,  Default { 0.86, 0.83, 0.63 }
+	{ 0.49, 0.49, 0.49 }	// 4 - stone, Default { 0.49, 0.49, 0.49 }
+};
+
+// Материалы (можно потрогать)
+const std::vector <Material> materials = {
+	{ 0.06, 0.95, 0.90, 0.50 },	// 0 - water, Default { 0.06, 0.95, 0.90, 0.50 }
+	{ 0.32, 0.90, 0.10, 0.05 },	// 1 - grass, Default { 0.32, 0.90, 0.10, 0.05 }
+	{ 0.87, 0.82, 0.35, 0.35 },	// 2 - snow,  Default { 0.87, 0.82, 0.35, 0.35 }
+	{ 0.18, 0.90, 0.15, 0.10 },	// 3 - sand,  Default { 0.18, 0.90, 0.15, 0.10 }
+	{ 0.40, 0.92, 0.05, 0.02 }	// 4 - stone, Default { 0.40, 0.92, 0.05, 0.02 }
 };
 
 // Параметры анимации (можно потрогать)
-const double animationSpeed = 0.25; // 0.25
-const double animationAirPlaneSpeed = 0.005;
-double animationLightMoment = 0.0;
-double animationTranslationMoment = 0.0;
-double animationAirPlaneMoment = 0.0;
+const GLfloat animationSpeed = 0.25;			// Default: 0.25
+const GLfloat animationAirPlaneSpeed = 0.005;	// Default: 0.005
+GLfloat animationLightMoment;					// Do not touch
+GLfloat animationTranslationMoment;				// Do not touch
+GLfloat animationAirPlaneMoment;				// Do not touch
 
 
 void loadTexture(std::string textureName) {
@@ -352,30 +340,41 @@ void initializeTextures() {
 	for (int i = 0; i < sizeof(textureNames) / sizeof(std::string); i++) loadTexture(textureNames[i]);
 }
 
-HCHANNEL channel;
+HSTREAM streamHit;
+HSTREAM streamMusic;
+
 void initializeSound() {
 	if (HIWORD(BASS_GetVersion()) != BASSVERSION) {
-		MessageBox(NULL, "Ошибка версии BASS.", NULL, 0);
+		MessageBox(NULL, "Ошибка версии BASS", NULL, 0);
 		return;
 	}
 	if (!BASS_Init(-1, 22050, BASS_DEVICE_3D, 0, NULL)) {
-		MessageBox(NULL, "Не удалось инициализировать BASS.", NULL, 0);
+		MessageBox(NULL, "Не удалось инициализировать BASS", NULL, 0);
 		return;
 	}
 
-	HSAMPLE samp;
-	char filename[] = "sound/hit.mp3";
-	samp = BASS_SampleLoad(FALSE, filename, 0, 0, 1, BASS_SAMPLE_3D);
-	if (!samp) {
-		MessageBox(NULL, "Беды с семплом.", NULL, 0);
+	char sampleFilepath[] = "sounds/hit.mp3";
+	streamHit = BASS_StreamCreateFile(FALSE, sampleFilepath, 0, 0, BASS_SAMPLE_3D);
+	if (!streamHit) {
+		MessageBox(NULL, "Не удалось загрузить звук", NULL, 0);
 		return;
 	}
 
-	channel = BASS_SampleGetChannel(samp, FALSE);
-	if (!channel) {
-		MessageBox(NULL, "Беды с каналом.", NULL, 0);
+	char streamFilepath[] = "sounds/music.mp3";
+	streamMusic = BASS_StreamCreateFile(FALSE, streamFilepath, 0, 0, BASS_SAMPLE_3D);
+	if (!streamMusic) {
+		MessageBox(NULL, "Не удалось загрузить музыку", NULL, 0);
 		return;
 	}
+
+	if (BASS_SampleGetChannel(streamMusic, FALSE)) {
+		MessageBox(NULL, "Не удалось обнаружить звуковой канал", NULL, 0);
+		return;
+	}
+
+	BASS_ChannelSetAttribute(streamHit, BASS_ATTRIB_VOL, 0.5);
+	BASS_ChannelSetAttribute(streamMusic, BASS_ATTRIB_VOL, 0.1);
+	BASS_ChannelPlay(streamMusic, TRUE);
 }
 
 
@@ -400,30 +399,36 @@ void lightController() {
 	if (lightLockMode) animationLightMoment = polygonSize * polygonNumberPerSide * visibleBiomeWidth / 4.0;
 	float i = animationLightMoment / (polygonSize * polygonNumberPerSide * visibleBiomeWidth);
 
-	float angle = 2.0 * M_PI * i;
-	float dx = visibleBiomeWidth * polygonNumberPerSide * polygonSize * cosf(angle);
-	float dz = visibleBiomeWidth * polygonNumberPerSide * polygonSize * sinf(angle);
-
-	light.pos = Vector3(dx, 0.0, dz);
+	float sunAngle = 2.0 * M_PI * i;
+	float sun_dx = visibleBiomeWidth * polygonNumberPerSide * polygonSize * cosf(sunAngle);
+	float sun_dz = visibleBiomeWidth * polygonNumberPerSide * polygonSize * sinf(sunAngle);
+	float sunPosition[3] = { sun_dx, 0.0, sun_dz };
 
 	glDisable(GL_FOG);
 
 	glPushMatrix();
-	GLfloat ambient[] = { 0.0, 0.0, 0.0, 1.0 };
-	GLfloat diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-	GLfloat specular[] = { 0.7, 0.7, 0.7, 1.0 };
-	GLfloat shininess = 0.0 * 128;
+	float moonColor = 1.4f - sunColor[0];
+	float blueColorReducer = (sunColor[0] + sunColor[1]) / (255.0f + sunColor[2]);
+	if (blueColorReducer > 1.0f) blueColorReducer -= 1.0f - blueColorReducer;
+	GLfloat ambient[] = { moonColor, moonColor, moonColor, 1.0f };
+	GLfloat diffuse[] = { sunColor[1] / 255.0f, sunColor[0] / 255.0f, blueColorReducer, 1.0f };
+	GLfloat specular[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	GLfloat shininess = 0.3f * 128.0f;
 
 	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
 	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
 	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
 	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 
-	double moonSize = polygonNumberPerSide * polygonSize / 4;
-	glTranslated(-dx / visibleBiomeWidth, polygonNumberPerSide * polygonSize * visibleBiomeHeight + moonSize, -dz / visibleBiomeWidth);
-	glRotated(90.0, 1.0, 0.0, 0.0);
-	glRotated(-45.0, 0.0, 0.0, 1.0);
-	glScaled(moonSize / 64.0, moonSize / 64.0, moonSize / 64.0);
+	float moonSize = polygonNumberPerSide * polygonSize / 4;
+	float moonAngle = sunAngle + 166.0;
+	float moon_dx = moon_dx = polygonNumberPerSide * polygonSize * cosf(moonAngle);
+	float moon_dz = moon_dz = polygonNumberPerSide * polygonSize * sinf(moonAngle);
+
+	glTranslatef(moon_dx, polygonNumberPerSide * polygonSize * visibleBiomeHeight + moonSize, moon_dz);
+	glRotatef(90.0, 1.0, 0.0, 0.0);
+	glRotatef(-45.0, 0.0, 0.0, 1.0);
+	glScalef(moonSize / 64.0, moonSize / 64.0, moonSize / 64.0);
 	glDepthMask(false);
 	moonTexture.bindTexture();
 	moonModel.DrawObj();
@@ -433,10 +438,43 @@ void lightController() {
 	fogMode ? glEnable(GL_FOG) : glDisable(GL_FOG);
 }
 
-void airPlaneControl() {
-	double x = 25.0 * (sqrt(2) * cos(animationAirPlaneMoment)) / (1 + pow(sin(animationAirPlaneMoment), 2));
-	double z = 10.0 * (sqrt(2) * cos(animationAirPlaneMoment) * sin(animationAirPlaneMoment)) / (1 + pow(sin(animationAirPlaneMoment), 2));
-	double y = 10.0 * exp(sin(animationAirPlaneMoment));
+void airPlaneAutoManualController() {
+	GLfloat speed = animationAirPlaneSpeed * 200.0 * (0.005 / animationAirPlaneSpeed);
+	GLfloat inaccuracy = 0.25;
+
+	GLfloat acceleration_X = pow(max(pointToFly[0], airPlaneTranslation[0]) -
+								 min(pointToFly[0], airPlaneTranslation[0]), 2) / 100.0;
+	GLfloat acceleration_Y = pow(max(pointToFly[1], airPlaneTranslation[1]) -
+								 min(pointToFly[1], airPlaneTranslation[1]), 2) / 100.0;
+
+	acceleration_X = acceleration_X > 1.0 ? acceleration_X : 1.0;
+	acceleration_Y = acceleration_Y > 1.0 ? acceleration_Y : 1.0;
+	acceleration_X = acceleration_X < 20.0 ? acceleration_X : 20.0;
+	acceleration_Y = acceleration_Y < 20.0 ? acceleration_Y : 20.0;
+
+	GLfloat vectorLength = sqrt(pow(pointToFly[0], 2) + pow(pointToFly[1], 2));
+	if (vectorLength == 0.0) vectorLength = 1.0;
+	GLfloat speed_X = speed * acceleration_X * (max(pointToFly[0], airPlaneTranslation[0]) - min(pointToFly[0], airPlaneTranslation[0])) / vectorLength;
+	GLfloat speed_Y = speed * acceleration_Y * (max(pointToFly[1], airPlaneTranslation[1]) - min(pointToFly[1], airPlaneTranslation[1])) / vectorLength;
+
+	prevAirPlaneTranslation[0] = airPlaneTranslation[0];
+	prevAirPlaneTranslation[1] = airPlaneTranslation[1];
+	prevAirPlaneTranslation[2] = airPlaneTranslation[2];
+
+	if (airPlaneTranslation[0] > pointToFly[0] + inaccuracy) {
+		airPlaneTranslation[0] -= speed_X;
+	} else if (airPlaneTranslation[0] < pointToFly[0] - inaccuracy) airPlaneTranslation[0] += speed_X;
+
+	if (airPlaneTranslation[1] > pointToFly[1] + inaccuracy) {
+		airPlaneTranslation[1] -= speed_Y;
+	} else if (airPlaneTranslation[1] < pointToFly[1] - inaccuracy) airPlaneTranslation[1] += speed_Y;
+}
+
+void airPlaneAutoFlyController() {
+	GLfloat x = 25.0 * (sqrt(2.0) * cos(animationAirPlaneMoment)) / (1.0 + pow(sin(animationAirPlaneMoment), 2.0));
+	GLfloat y = 10.0 * exp(sin(animationAirPlaneMoment));
+	GLfloat z = 10.0 * (sqrt(2.0) * cos(animationAirPlaneMoment) * sin(animationAirPlaneMoment)) /
+		(1.0 + pow(sin(animationAirPlaneMoment), 2.0)) + maxHeight + 5.0;
 
 	prevAirPlaneTranslation[0] = airPlaneTranslation[0];
 	prevAirPlaneTranslation[1] = airPlaneTranslation[1];
@@ -444,32 +482,146 @@ void airPlaneControl() {
 
 	airPlaneTranslation[0] = x;
 	airPlaneTranslation[1] = y;
-	airPlaneTranslation[2] = maxHeight + 5.0 + z;
+	airPlaneTranslation[2] = z;
+}
+
+void airPlaneControlSwitchController() {
+	prevAirPlaneTranslation[0] = airPlaneTranslation[0];
+	prevAirPlaneTranslation[1] = airPlaneTranslation[1];
+	prevAirPlaneTranslation[2] = airPlaneTranslation[2];
+
+	GLfloat speed = animationAirPlaneSpeed * 50.0;
+	GLfloat inaccuracy = 2.0 * speed;
+
+	if (manualControl) {
+		GLfloat acceleration_X = pow(airPlaneTranslation[0], 2) / 100.0;
+		GLfloat acceleration_Y = pow(-10.0 - airPlaneTranslation[1], 2) / 100.0;
+		GLfloat acceleration_Z = pow(maxHeight - airPlaneTranslation[2], 2) / 100.0;
+
+		acceleration_X = acceleration_X > 0.5 * (0.005 / animationAirPlaneSpeed) ? acceleration_X : 0.5 * (0.005 / animationAirPlaneSpeed);
+		acceleration_Y = acceleration_Y > 0.5 * (0.005 / animationAirPlaneSpeed) ? acceleration_Y : 0.5 * (0.005 / animationAirPlaneSpeed);
+		acceleration_Z = acceleration_Z > 0.5 * (0.005 / animationAirPlaneSpeed) ? acceleration_Z : 0.5 * (0.005 / animationAirPlaneSpeed);
+
+		if (airPlaneTranslation[0] > inaccuracy || airPlaneTranslation[0] < -inaccuracy ||
+			airPlaneTranslation[1] > -10.0 + inaccuracy || airPlaneTranslation[1] < -10.0 - inaccuracy ||
+			airPlaneTranslation[2] > maxHeight + inaccuracy ||
+			airPlaneTranslation[2] < maxHeight - inaccuracy) {
+			if (airPlaneTranslation[0] > inaccuracy) {
+				airPlaneTranslation[0] -= speed * acceleration_X;
+			} else if (airPlaneTranslation[0] < -inaccuracy) {
+				airPlaneTranslation[0] += speed * acceleration_X;
+			}
+
+			if (airPlaneTranslation[1] > -10.0 + inaccuracy) {
+				airPlaneTranslation[1] -= speed * acceleration_Y;
+			} else if (airPlaneTranslation[1] < -10.0 - inaccuracy) {
+				airPlaneTranslation[1] += speed * acceleration_Y;
+			}
+
+			if (airPlaneTranslation[2] > maxHeight + inaccuracy) {
+				airPlaneTranslation[2] -= speed * acceleration_Z;
+			} else if (airPlaneTranslation[2] < maxHeight - inaccuracy) {
+				airPlaneTranslation[2] += speed * acceleration_Z;
+			}
+		} else {
+			isReadyToControl = true;
+			isControlSwitched = false;
+		}
+	} else {
+		GLfloat animOffset = 0.75;
+		if (savedAnimStatus + animOffset > 2.0 * M_PI) animOffset = 2.0 * M_PI - savedAnimStatus;
+
+		GLfloat x = 25.0 * (sqrt(2.0) * cos(savedAnimStatus + animOffset)) / (1.0 + pow(sin(savedAnimStatus + animOffset), 2.0));
+		GLfloat y = 10.0 * exp(sin(savedAnimStatus + animOffset));
+		GLfloat z = 10.0 * (sqrt(2.0) * cos(savedAnimStatus + animOffset) * sin(savedAnimStatus + animOffset)) /
+			(1.0 + pow(sin(savedAnimStatus + animOffset), 2.0)) + maxHeight + 5.0;
+
+		GLfloat acceleration_X = pow(x - airPlaneTranslation[0], 2) / 100.0;
+		GLfloat acceleration_Y = pow(y - airPlaneTranslation[1], 2) / 100.0;
+		GLfloat acceleration_Z = pow(z - airPlaneTranslation[2], 2) / 100.0;
+
+		acceleration_X = acceleration_X > 0.5 * (0.005 / animationAirPlaneSpeed) ? acceleration_X : 0.5 * (0.005 / animationAirPlaneSpeed);
+		acceleration_Y = acceleration_Y > 0.5 * (0.005 / animationAirPlaneSpeed) ? acceleration_Y : 0.5 * (0.005 / animationAirPlaneSpeed);
+		acceleration_Z = acceleration_Z > 0.5 * (0.005 / animationAirPlaneSpeed) ? acceleration_Z : 0.5 * (0.005 / animationAirPlaneSpeed);
+
+		if (airPlaneTranslation[0] > x + inaccuracy || airPlaneTranslation[0] < x - inaccuracy ||
+			airPlaneTranslation[1] > y + inaccuracy || airPlaneTranslation[1] < y - inaccuracy ||
+			airPlaneTranslation[2] > z + inaccuracy || airPlaneTranslation[2] < z - inaccuracy ||
+			animationAirPlaneMoment > savedAnimStatus + animOffset + animationAirPlaneSpeed ||
+			animationAirPlaneMoment < savedAnimStatus + animOffset - animationAirPlaneSpeed) {
+			if (airPlaneTranslation[0] > x + inaccuracy) {
+				airPlaneTranslation[0] -= speed * acceleration_X;
+			} else if (airPlaneTranslation[0] < x - inaccuracy) {
+				airPlaneTranslation[0] += speed * acceleration_X;
+			}
+
+			if (airPlaneTranslation[1] > y + inaccuracy) {
+				airPlaneTranslation[1] -= speed * acceleration_Y;
+			} else if (airPlaneTranslation[1] < y - inaccuracy) {
+				airPlaneTranslation[1] += speed * acceleration_Y;
+			}
+
+			if (airPlaneTranslation[2] > z + inaccuracy) {
+				airPlaneTranslation[2] -= speed * acceleration_Z;
+			} else if (airPlaneTranslation[2] < z - inaccuracy) {
+				airPlaneTranslation[2] += speed * acceleration_Z;
+			}
+		} else {
+			isReadyToControl = true;
+			isControlSwitched = false;
+		}
+	}
 }
 
 
-double getRandomNumber(double lowerBorder, double upperBorder) {
-	return lowerBorder + static_cast <double> (rand()) / (static_cast <double> (RAND_MAX / (upperBorder - lowerBorder)));
+float getRandomNumber(float lowerBorder, GLfloat upperBorder) {
+	return lowerBorder + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (upperBorder - lowerBorder)));
 }
 
-double getRandomHeight(int count, int range, double avg, BiomeParams biomeParams) {
-	double biomeBorder_max = biomeParams.maxAltitude * count - avg;
-	double biomeBorder_min = biomeParams.minAltitude * count - avg;
+float getRandomHeight(GLint count, GLint range, GLfloat avg, BiomeParams biomeParams) {
+	float biomeBorder_max = biomeParams.maxAltitude * count - avg;
+	float biomeBorder_min = biomeParams.minAltitude * count - avg;
 
-	double randomBorder_max = double(range) / biomeParams.scale;
-	double randomBorder_min = -randomBorder_max;
+	float randomBorder_max = float(range) / biomeParams.scale;
+	float randomBorder_min = -randomBorder_max;
 
-	double lowerBorder = max(biomeBorder_min, randomBorder_min);
-	double upperBorder = min(biomeBorder_max, randomBorder_max);
+	float lowerBorder = max(biomeBorder_min, randomBorder_min);
+	float upperBorder = min(biomeBorder_max, randomBorder_max);
 
 	return (avg + getRandomNumber(lowerBorder, upperBorder)) / count;
 }
 
+void calculateNormal(const GLfloat *firstPoint, const GLfloat *secondPoint, const GLfloat *generalPoint, GLfloat *resultNormal) {
+	float x_1 = firstPoint[0];
+	float y_1 = firstPoint[1];
+	float z_1 = firstPoint[2];
 
-void diamondSquareAlgorithm_SquareStep(std::vector <std::vector <double>> *points,
-									   int x, int y, int reach, BiomeParams biomeParams) {
+	float x_2 = secondPoint[0];
+	float y_2 = secondPoint[1];
+	float z_2 = secondPoint[2];
+
+	float x_3 = generalPoint[0];
+	float y_3 = generalPoint[1];
+	float z_3 = generalPoint[2];
+
+	float line_1[] = { x_2 - x_1, y_2 - y_1, z_2 - z_1 };
+	float line_2[] = { x_2 - x_3, y_2 - y_3, z_2 - z_3 };
+
+	float n_x = line_1[1] * line_2[2] - line_2[1] * line_1[2];
+	float n_y = line_1[0] * line_2[2] - line_2[0] * line_1[2];
+	float n_z = line_1[0] * line_2[1] - line_2[0] * line_1[1];
+
+	float length = sqrt(pow(n_x, 2.0) + pow(n_y, 2.0) + pow(n_z, 2.0));
+	resultNormal[0] = n_x / length;
+	resultNormal[1] = -n_y / length;
+	resultNormal[2] = n_z / length;
+}
+
+
+void diamondSquareAlgorithm_SquareStep(std::vector <std::vector <GLfloat>> *points,
+									   GLint x, GLint y, GLint reach, BiomeParams biomeParams) {
 	int count = 0;
-	double avg = 0.0;
+	float avg = 0.0;
 
 	if (x - reach >= 0 && y - reach >= 0) {
 		avg += (*points)[x - reach][y - reach];
@@ -494,15 +646,15 @@ void diamondSquareAlgorithm_SquareStep(std::vector <std::vector <double>> *point
 	(*points)[x][y] = getRandomHeight(count, reach, avg, biomeParams);
 }
 
-void diamondSquareAlgorithm_DiamondStep(std::vector <std::vector <double>> *points,
-										int x, int y, int reach, BiomeParams biomeParams,
-										std::vector <double> rightSide_EndCoords,
-										std::vector <double> upperSide_EndCoords) {
+void diamondSquareAlgorithm_DiamondStep(std::vector <std::vector <GLfloat>> *points,
+										GLint x, GLint y, GLint reach, BiomeParams biomeParams,
+										std::vector <GLfloat> rightSide_EndCoords,
+										std::vector <GLfloat> upperSide_EndCoords) {
 	if (!rightSide_EndCoords.empty()) (*points)[0][y] = rightSide_EndCoords[y];
 	if (!upperSide_EndCoords.empty()) (*points)[x][0] = upperSide_EndCoords[x];
 
 	int count = 0;
-	double avg = 0.0;
+	float avg = 0.0;
 
 	if (x - reach >= 0) {
 		avg += (*points)[x - reach][y];
@@ -524,10 +676,10 @@ void diamondSquareAlgorithm_DiamondStep(std::vector <std::vector <double>> *poin
 	(*points)[x][y] = getRandomHeight(count, reach, avg, biomeParams);
 }
 
-void callDiamondSquareAlgorithm(std::vector <std::vector <double>> *points,
-								int size, BiomeParams biomeParams,
-								std::vector <double> rightSide_EndCoords,
-								std::vector <double> upperSide_EndCoords) {
+void callDiamondSquareAlgorithm(std::vector <std::vector <GLfloat>> *points,
+								GLint size, BiomeParams biomeParams,
+								std::vector <GLfloat> rightSide_EndCoords,
+								std::vector <GLfloat> upperSide_EndCoords) {
 	int half = size / 2;
 	if (half < 1) return;
 
@@ -558,16 +710,29 @@ void callDiamondSquareAlgorithm(std::vector <std::vector <double>> *points,
 	callDiamondSquareAlgorithm(points, size / 2, biomeParams, rightSide_EndCoords, upperSide_EndCoords);
 }
 
-
 void drawAirPlane() {
 	glPushMatrix();
-	glTranslated(airPlaneTranslation[0], airPlaneTranslation[1], airPlaneTranslation[2]);
-	double multiplier_X = manualControl ? 45.0 : 180.0;
-	double multiplier_Y = manualControl ? 15.0 : 60.0;
-	glRotated((airPlaneTranslation[0] - prevAirPlaneTranslation[0]) * multiplier_X, 0.0, 1.0, 0.0);
-	glRotated((airPlaneTranslation[1] - prevAirPlaneTranslation[1]) * multiplier_Y, 1.0, 0.0, 0.0);
-	glColor3d(backgroundColor, backgroundColor, backgroundColor);
-	glScaled(0.5, 0.5, 0.5);
+	glTranslatef(airPlaneTranslation[0], airPlaneTranslation[1], airPlaneTranslation[2]);
+	float multiplier_X = manualControl ? 45.0 : 180.0;
+	float multiplier_Y = manualControl ? 15.0 : 60.0;
+	if (!manualControl) {
+		multiplier_X *= (0.005 / animationAirPlaneSpeed);
+		multiplier_Y *= (0.005 / animationAirPlaneSpeed);
+	}
+
+	glRotatef((airPlaneTranslation[1] - prevAirPlaneTranslation[1]) * multiplier_Y, 1.0, 0.0, 0.0);
+	glRotatef((airPlaneTranslation[0] - prevAirPlaneTranslation[0]) * multiplier_X, 0.0, 1.0, 0.0);
+	glScalef(0.5, 0.5, 0.5);
+
+	GLfloat ambient[4] = { 0.19225, 0.19225, 0.19225, 1.0 };
+	GLfloat diffuse[4] = { 0.50754, 0.50754, 0.50754, 1.0 };
+	GLfloat specular[4] = { 0.508273, 0.508273, 0.508273, 1.0 };
+	GLfloat shininess = 0.4 * 128.0;
+
+	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
 
 	airPlaneTexture.bindTexture();
 	airPlaneModel.DrawObj();
@@ -577,21 +742,22 @@ void drawAirPlane() {
 
 std::mutex cout_guard;
 
-void set_Id_Texture_Color_forPolygon(Chunk *chunk, GLint firstId, GLint textureAndColorId) {
+void setParamsforPolygon(Chunk *chunk, GLint firstId, GLint paramId) {
 	chunk->heightIds.push_back(firstId);
-	chunk->colors.push_back(colors[textureAndColorId]);
-	chunk->textureIds.push_back(textures[textureAndColorId]);
+	chunk->colors.push_back(colors[paramId]);
+	chunk->textureIds.push_back(textures[paramId]);
+	chunk->materialIds.push_back(materials[paramId]);
 }
 
 struct between {
-	between(GLdouble upperBorder, GLdouble lowerBorder = -100.0) :
+	between(GLfloat upperBorder, GLfloat lowerBorder = -100.0) :
 		_upperBorder(upperBorder), _lowerBorder(lowerBorder) { }
 
 	bool operator()(TriangularSquare_withNormals val) {
 		return val.getCenterCoord_Z() > _lowerBorder && val.getCenterCoord_Z() <= _upperBorder;
 	}
 
-	GLdouble _lowerBorder, _upperBorder;
+	GLfloat _lowerBorder, _upperBorder;
 };
 
 bool comp(TriangularSquare_withNormals triangularSquare_withNormals_1, TriangularSquare_withNormals triangularSquare_withNormals_2) {
@@ -603,30 +769,30 @@ void calculateBiome(Biome *biome) {
 	srand(time(NULL));
 	biome->chunks.clear();
 
-	GLdouble chunkSize = polygonNumberPerSide * polygonSize;
-	GLdouble chunkOffset_Y = -chunkSize / 2;
+	GLfloat chunkSize = polygonNumberPerSide * polygonSize;
+	GLfloat chunkOffset_Y = -chunkSize / 2;
 
 	for (int index = 0; index < visibleBiomeHeight; index++) {
-		GLdouble chunkOffset_X = -(visibleBiomeWidth / 2.0) * chunkSize;// +chunkSize / 2.0 + polygonSize / 2.0;
+		GLfloat chunkOffset_X = -(visibleBiomeWidth / 2.0) * (chunkSize - polygonSize);
 
 		for (int jndex = 0; jndex < visibleBiomeWidth; jndex++) {
-			std::vector <std::vector <double>> points;
+			std::vector <std::vector <float>> points;
 			for (int i = 0; i < polygonNumberPerSide; i++) {
-				std::vector <double> points_X(polygonNumberPerSide);
+				std::vector <float> points_X(polygonNumberPerSide);
 				points.push_back(points_X);
 			}
 
 			// Связывание текущего чанка и биома с предыдущими
 			//============================================================================================
-			std::vector <double> prevBiome_upperSide_EndCoords =
+			std::vector <float> prevBiome_upperSide_EndCoords =
 				biome->previousBiome_EndCoords.empty() ?
-				std::vector <GLdouble>() : biome->previousBiome_EndCoords[jndex];
-			std::vector <double> prevChunk_rightSide_EndCoords;
-			std::vector <double> prevChunk_upperSide_EndCoords;
+				std::vector <GLfloat>() : biome->previousBiome_EndCoords[jndex];
+			std::vector <float> prevChunk_rightSide_EndCoords;
+			std::vector <float> prevChunk_upperSide_EndCoords;
 
-			if (jndex - 1 >= 0) prevChunk_rightSide_EndCoords = 
+			if (jndex - 1 >= 0) prevChunk_rightSide_EndCoords =
 				biome->chunks[index * visibleBiomeWidth + jndex - 1].rightSide_EndCoords;
-			if (index - 1 >= 0) prevChunk_upperSide_EndCoords = 
+			if (index - 1 >= 0) prevChunk_upperSide_EndCoords =
 				biome->chunks[(index - 1) * visibleBiomeWidth + jndex].upperSide_EndCoords;
 
 			if (!prevBiome_upperSide_EndCoords.empty() && index == 0) {
@@ -640,8 +806,8 @@ void calculateBiome(Biome *biome) {
 
 			// Сохранение высот правой и верхней границы чанка
 			//============================================================================================
-			std::vector <double> rightSide_EndCoords;
-			std::vector <double> upperSide_EndCoords;
+			std::vector <float> rightSide_EndCoords;
+			std::vector <float> upperSide_EndCoords;
 
 			for (int i = 0; i < polygonNumberPerSide; i++) {
 				rightSide_EndCoords.push_back(points[polygonNumberPerSide - 1][i]);
@@ -703,13 +869,13 @@ void calculateBiome(Biome *biome) {
 				} else if (biome->biomeParams.biomeId == 3 || biome->biomeParams.biomeId == 9 || biome->biomeParams.biomeId == 12) {
 					textureId = 3;
 				}
-				set_Id_Texture_Color_forPolygon(&chunk, std::distance(chunk.chunkPolygons.begin(), groundIterator), textureId);
+				setParamsforPolygon(&chunk, std::distance(chunk.chunkPolygons.begin(), groundIterator), textureId);
 			}
 			if (stoneIterator != chunk.chunkPolygons.end()) {
-				set_Id_Texture_Color_forPolygon(&chunk, std::distance(chunk.chunkPolygons.begin(), stoneIterator), 4);
+				setParamsforPolygon(&chunk, std::distance(chunk.chunkPolygons.begin(), stoneIterator), 4);
 			}
 			if (snowIterator != chunk.chunkPolygons.end()) {
-				set_Id_Texture_Color_forPolygon(&chunk, std::distance(chunk.chunkPolygons.begin(), snowIterator), 2);
+				setParamsforPolygon(&chunk, std::distance(chunk.chunkPolygons.begin(), snowIterator), 2);
 			}
 			biome->chunks.push_back(chunk);
 			chunkOffset_X += chunkSize - polygonSize;
@@ -730,44 +896,64 @@ void generateLists(GLuint *biomeLists, Biome biome) {
 			for (int i = 0; i < (int) currentChunk.chunkPolygons.size(); i++) {
 				if (k < currentChunk.heightIds.size() && currentChunk.heightIds[k] == i) {
 					if (k > 0) glEnd();
-					glColor3dv(&currentChunk.colors[k][0]);
+					glColor3fv(&currentChunk.colors[k][0]);
 					glBindTexture(GL_TEXTURE_2D, currentChunk.textureIds[k]);
+
+					GLfloat ambient[4];
+					GLfloat diffuse[4];
+					GLfloat specular[4];
+					for (GLint i = 0; i < 4; i++) {
+						if (i != 3) {
+							ambient[i] = currentChunk.materialIds[k].ambient;
+							diffuse[i] = currentChunk.materialIds[k].diffuse;
+							specular[i] = currentChunk.materialIds[k].specular;
+						} else {
+							ambient[i] = 1.0;
+							diffuse[i] = 1.0;
+							specular[i] = 1.0;
+						}
+					}
+
+					glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+					glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+					glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+					glMaterialf(GL_FRONT, GL_SHININESS, currentChunk.materialIds[k].shininess * 128.0);
 					glBegin(GL_TRIANGLES);
 					k++;
 				}
 				TriangularSquare_withNormals currentPolygon = currentChunk.chunkPolygons[i];
 
-				glNormal3dv(currentPolygon.lowerTriangleNormal);
+				glNormal3fv(currentPolygon.lowerTriangleNormal);
 				glTexCoord2d(0.0, 0.0);
-				glVertex3dv(currentPolygon.lowerLeft);
+				glVertex3fv(currentPolygon.lowerLeft);
 				glTexCoord2d(0.0, 1.0);
-				glVertex3dv(currentPolygon.lowerRight);
+				glVertex3fv(currentPolygon.lowerRight);
 				glTexCoord2d(0.5, 0.5);
-				glVertex3dv(currentPolygon.center);
+				glVertex3fv(currentPolygon.center);
 
-				glNormal3dv(currentPolygon.rightTriangleNormal);
+				glNormal3fv(currentPolygon.rightTriangleNormal);
 				glTexCoord2d(0.0, 1.0);
-				glVertex3dv(currentPolygon.lowerRight);
+				glVertex3fv(currentPolygon.lowerRight);
 				glTexCoord2d(1.0, 1.0);
-				glVertex3dv(currentPolygon.upperRight);
+				glVertex3fv(currentPolygon.upperRight);
 				glTexCoord2d(0.5, 0.5);
-				glVertex3dv(currentPolygon.center);
+				glVertex3fv(currentPolygon.center);
 
-				glNormal3dv(currentPolygon.upperTriangleNormal);
+				glNormal3fv(currentPolygon.upperTriangleNormal);
 				glTexCoord2d(1.0, 1.0);
-				glVertex3dv(currentPolygon.upperRight);
+				glVertex3fv(currentPolygon.upperRight);
 				glTexCoord2d(1.0, 0.0);
-				glVertex3dv(currentPolygon.upperLeft);
+				glVertex3fv(currentPolygon.upperLeft);
 				glTexCoord2d(0.5, 0.5);
-				glVertex3dv(currentPolygon.center);
+				glVertex3fv(currentPolygon.center);
 
-				glNormal3dv(currentPolygon.leftTriangleNormal);
+				glNormal3fv(currentPolygon.leftTriangleNormal);
 				glTexCoord2d(1.0, 0.0);
-				glVertex3dv(currentPolygon.upperLeft);
+				glVertex3fv(currentPolygon.upperLeft);
 				glTexCoord2d(0.0, 0.0);
-				glVertex3dv(currentPolygon.lowerLeft);
+				glVertex3fv(currentPolygon.lowerLeft);
 				glTexCoord2d(0.5, 0.5);
-				glVertex3dv(currentPolygon.center);
+				glVertex3fv(currentPolygon.center);
 			}
 			glEnd();
 			glEndList();
@@ -785,7 +971,7 @@ void startThread(Biome *biome, Biome *nextBiome) {
 
 // Биомы
 Biome biome_0, biome_1, biome_2;
-// Массив водички
+// Листы водяного уровня
 GLuint waterLevel_lists[visibleBiomeWidth * visibleBiomeHeight];
 // Листы текущего биома
 GLuint biome_0_lists[visibleBiomeWidth * visibleBiomeHeight];
@@ -795,40 +981,44 @@ GLuint biome_1_lists[visibleBiomeWidth * visibleBiomeHeight];
 GLuint biome_2_lists[visibleBiomeWidth * visibleBiomeHeight];
 
 void createWaterLists() {
-	GLdouble polygonNumberPerSide_water = polygonNumberPerSide / 16;
-	GLdouble polygonSize_water = polygonSize * 16;
+	GLfloat polygonNumberPerSide_water = polygonNumberPerSide / 16.0;
+	GLfloat polygonSize_water = polygonSize * 16;
 
-	GLdouble chunkSize = polygonNumberPerSide * polygonSize;
-	GLdouble chunkOffset_Y = -chunkSize / 2;
+	GLfloat chunkSize = polygonNumberPerSide * polygonSize;
+	GLfloat chunkOffset_Y = -chunkSize / 2;
 
-	waterLevel_lists[0] = glGenLists(visibleBiomeWidth * visibleBiomeHeight);
-	for (int i = 1; i < visibleBiomeWidth * visibleBiomeHeight; i++) {
-		waterLevel_lists[i] = waterLevel_lists[i - 1] + 1;
-	}
+	GLfloat ambient[4] = { materials[0].ambient, materials[0].ambient, materials[0].ambient, 1.0f };
+	GLfloat diffuse[4] = { materials[0].diffuse, materials[0].diffuse, materials[0].diffuse, 1.0f };
+	GLfloat specular[4] = { materials[0].specular, materials[0].specular, materials[0].specular, 1.0f };
 
 	for (int i = 0; i < visibleBiomeHeight; i++) {
-		GLdouble chunkOffset_X = -(visibleBiomeWidth / 2.0) * chunkSize;
+		GLfloat chunkOffset_X = -(visibleBiomeWidth / 2.0) * (chunkSize - polygonSize);
 
 		for (int j = 0; j < visibleBiomeWidth; j++) {
 			glNewList(waterLevel_lists[i * visibleBiomeWidth + j], GL_COMPILE);
-			glColor3dv(&colors[0][0]);
+			glColor3fv(&colors[0][0]);
 			glNormal3d(0.0, 0.0, 1.0);
 			glBindTexture(GL_TEXTURE_2D, textures[0]);
+
+			glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
+			glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
+			glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+			glMaterialf(GL_FRONT, GL_SHININESS, materials[0].shininess);
 
 			glBegin(GL_QUADS);
 			for (int polygonNumber_Y = 0; polygonNumber_Y < polygonNumberPerSide_water; polygonNumber_Y++) {
 				for (int polygonNumber_X = 0; polygonNumber_X < polygonNumberPerSide_water; polygonNumber_X++) {
-					GLint resultOffset_Y = chunkOffset_Y + polygonNumber_Y * polygonSize_water;
-					GLint resultOffset_X = chunkOffset_X + polygonNumber_X * polygonSize_water;
+					GLfloat resultOffset_Y = chunkOffset_Y + polygonNumber_Y * polygonSize_water;
+					GLfloat resultOffset_X = chunkOffset_X + polygonNumber_X * polygonSize_water;
 
 					glTexCoord2d(0.0, 0.0);
-					glVertex3d(resultOffset_X, resultOffset_Y, waterLevel);
+					glVertex3f(resultOffset_X, resultOffset_Y, waterLevel);
 					glTexCoord2d(0.0, 1.0);
-					glVertex3d(resultOffset_X, resultOffset_Y + GLdouble(polygonSize_water), waterLevel);
+					glVertex3f(resultOffset_X, resultOffset_Y + polygonSize_water, waterLevel);
 					glTexCoord2d(1.0, 1.0);
-					glVertex3d(resultOffset_X + GLdouble(polygonSize_water), resultOffset_Y + GLdouble(polygonSize_water), waterLevel);
+					glVertex3f(resultOffset_X + polygonSize_water, resultOffset_Y + polygonSize_water, waterLevel);
 					glTexCoord2d(1.0, 0.0);
-					glVertex3d(resultOffset_X + GLdouble(polygonSize_water), resultOffset_Y, waterLevel);
+					glVertex3f(resultOffset_X + polygonSize_water, resultOffset_Y, waterLevel);
 				}
 			}
 			glEnd();
@@ -841,43 +1031,75 @@ void createWaterLists() {
 
 
 void transController() {
-	double translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
+	float translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
 
 	switch (translateIndexator) {
 		case 0:
 			glPushMatrix();
-			glTranslated(0.0, -animationTranslationMoment, 0.0);
+			glTranslatef(0.0, -animationTranslationMoment, 0.0);
 			glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, biome_0_lists);
 			glPopMatrix();
 
 			glPushMatrix();
-			glTranslated(0.0, translationSize - animationTranslationMoment, 0.0);
+			glTranslatef(0.0, translationSize - animationTranslationMoment, 0.0);
 			glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, biome_1_lists);
 			glPopMatrix();
 			break;
 		case 1:
 			glPushMatrix();
-			glTranslated(0.0, -animationTranslationMoment, 0.0);
+			glTranslatef(0.0, -animationTranslationMoment, 0.0);
 			glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, biome_1_lists);
 			glPopMatrix();
 
 			glPushMatrix();
-			glTranslated(0.0, translationSize - animationTranslationMoment, 0.0);
+			glTranslatef(0.0, translationSize - animationTranslationMoment, 0.0);
 			glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, biome_2_lists);
 			glPopMatrix();
 			break;
 		case 2:
 			glPushMatrix();
-			glTranslated(0.0, -animationTranslationMoment, 0.0);
+			glTranslatef(0.0, -animationTranslationMoment, 0.0);
 			glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, biome_2_lists);
 			glPopMatrix();
 
 			glPushMatrix();
-			glTranslated(0.0, translationSize - animationTranslationMoment, 0.0);
+			glTranslatef(0.0, translationSize - animationTranslationMoment, 0.0);
 			glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, biome_0_lists);
 			glPopMatrix();
 			break;
 	}
+}
+
+void cameraController() {
+	GLfloat vectorLength = 0.0;
+	GLfloat fogEnd = polygonNumberPerSide * polygonSize * 1.5;
+
+	if (viewMode == 0) {
+		GLfloat camMove_X = airPlaneTranslation[0] - (animationAirPlaneMoment * (prevAirPlaneTranslation[0] - airPlaneTranslation[0]) / 4.0);
+		GLfloat camMove_Y = airPlaneTranslation[1] - (animationAirPlaneMoment * (prevAirPlaneTranslation[1] - airPlaneTranslation[1]));
+		vectorLength = sqrt(pow(airPlaneTranslation[0], 2) + pow(airPlaneTranslation[1] + 1.0, 2) + pow(airPlaneTranslation[2] + 1.0, 2));
+		camera.pos.setCoords(airPlaneTranslation[0], airPlaneTranslation[1] + 1.0, airPlaneTranslation[2] + 1.0);
+		camera.lookPoint.setCoords(camMove_X, camMove_Y + 2.0, airPlaneTranslation[2] + 0.5);
+	} else if (viewMode == 1) {
+		GLfloat camMove_X = airPlaneTranslation[0] - (animationAirPlaneMoment * (prevAirPlaneTranslation[0] - airPlaneTranslation[0]) * 2.0);
+		GLfloat camMove_Y = airPlaneTranslation[1] - (animationAirPlaneMoment * (prevAirPlaneTranslation[1] - airPlaneTranslation[1]) * 2.0);
+		vectorLength = sqrt(pow(airPlaneTranslation[0], 2) + pow(airPlaneTranslation[1] - 7.0, 2) + pow(airPlaneTranslation[2] + 4.0, 2));
+		camera.pos.setCoords(airPlaneTranslation[0], airPlaneTranslation[1] - 7.0, airPlaneTranslation[2] + 4.0);
+		camera.lookPoint.setCoords(camMove_X, camMove_Y, airPlaneTranslation[2]);
+	} else if (viewMode == 2) {
+		if (!operatorMode) {
+			camera.fi1 = M_PI / 180.0 * -90.0;
+			camera.fi2 = M_PI / 180.0 * 45.0;
+		}
+		camera.pos.setCoords(camera.camDist * cos(camera.fi2) * cos(camera.fi1),
+							 camera.camDist * cos(camera.fi2) * sin(camera.fi1),
+							 camera.camDist * sin(camera.fi2));
+		camera.lookPoint.setCoords(0.0, 0.0, maxHeight);
+	}
+	fogEnd -= vectorLength;
+
+	glFogf(GL_FOG_START, fogEnd / 5.0);
+	glFogf(GL_FOG_END, fogEnd);
 }
 
 int getBiomeId() {
@@ -890,22 +1112,26 @@ int getBiomeId() {
 
 
 GLuint torusList;
-static void torus(int numc, int numt) {
+void createTorusList() {
+	glNewList(torusList, GL_COMPILE);
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_LIGHTING);
-	glColor3d(1.0, 1.0, 0.0);
 
-	for (int i = 0; i < numc; i++) {
+	int partsNumber = 30;
+	GLfloat firstPoint[3], secondPoint[3], generalPoint[3];
+	for (int i = 0; i < partsNumber; i++) {
+		glColor3d(1.0, 1.0, 0.0);
 		glBegin(GL_QUAD_STRIP);
-		for (int j = 0; j <= numt; j++) {
+		for (int j = 0; j <= partsNumber; j++) {
 			for (int k = 1; k >= 0; k--) {
-				GLdouble s = (i + k) % numc + 0.5;
-				GLdouble t = j % numt;
+				GLfloat s = (i + k) % partsNumber + 0.5;
+				GLfloat t = j % partsNumber;
 
-				GLdouble x = (1 + 0.1 * cos(s * 2.0 * PI / numc)) * cos(t * 2.0 * PI / numt);
-				GLdouble y = (1 + 0.1 * cos(s * 2.0 * PI / numc)) * sin(t * 2.0 * PI / numt);
-				GLdouble z = 0.1 * sin(s * 2.0 * PI / numc);
-				glVertex3d(x, y, z);
+				GLfloat x = (1.0 + 0.1 * cos(s * 2.0 * M_PI / partsNumber)) * cos(t * 2.0 * M_PI / partsNumber);
+				GLfloat y = (1.0 + 0.1 * cos(s * 2.0 * M_PI / partsNumber)) * sin(t * 2.0 * M_PI / partsNumber);
+				GLfloat z = 0.1 * sin(s * 2.0 * M_PI / partsNumber);
+
+				glVertex3f(x, y, z);
 			}
 		}
 		glEnd();
@@ -913,9 +1139,10 @@ static void torus(int numc, int numt) {
 
 	lightMode ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 	textureMode ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
+	glEndList();
 }
 
-double distance(double x1, double y1, double z1, double x2, double y2, double z2) {
+float distance(float x1, GLfloat y1, GLfloat z1, GLfloat x2, GLfloat y2, GLfloat z2) {
 	return sqrt(pow((x1 - x2), 2) + pow((y1 - y2), 2) + pow((z1 - z2), 2));
 }
 
@@ -928,14 +1155,13 @@ void myInitRender() {
 	airPlaneTexture.loadTextureFromFile("textures\\airplane.bmp");
 	loadModel("models\\moon.obj", &moonModel);
 	moonTexture.loadTextureFromFile("textures\\moon.bmp");
+	animationLightMoment = polygonSize * polygonNumberPerSide * visibleBiomeWidth * 0.9;
 
 	if (quickMultiplier > 1) {
 		polygonNumberPerSide = (int) pow(2, quickMultiplier);
-		polygonSize = 128.0 / GLdouble(polygonNumberPerSide);
+		polygonSize = 128.0 / GLfloat(polygonNumberPerSide);
 		polygonNumberInChunk = (int) pow(polygonNumberPerSide, 2);
-	}
 
-	if (quickMultiplier > 1) {
 		for (int i = 0; i < (int) biomeParams.size(); i++) {
 			biomeParams[i].scale = pow(2, biomeParams[i].scale + quickMultiplier - 8);
 		}
@@ -945,12 +1171,14 @@ void myInitRender() {
 		}
 	}
 
-	createWaterLists();
+	torusList = glGenLists(1);
+	waterLevel_lists[0] = glGenLists(visibleBiomeWidth * visibleBiomeHeight);
 	biome_0_lists[0] = glGenLists(visibleBiomeWidth * visibleBiomeHeight);
 	biome_1_lists[0] = glGenLists(visibleBiomeWidth * visibleBiomeHeight);
 	biome_2_lists[0] = glGenLists(visibleBiomeWidth * visibleBiomeHeight);
 
 	for (int i = 1; i < visibleBiomeWidth * visibleBiomeHeight; i++) {
+		waterLevel_lists[i] = waterLevel_lists[i - 1] + 1;
 		biome_0_lists[i] = biome_0_lists[i - 1] + 1;
 		biome_1_lists[i] = biome_1_lists[i - 1] + 1;
 		biome_2_lists[i] = biome_2_lists[i - 1] + 1;
@@ -960,46 +1188,38 @@ void myInitRender() {
 	biome_1.biomeParams = biomeParams[getBiomeId()];
 	biome_2.biomeParams = biomeParams[getBiomeId()];
 
-	std::thread myThread1(startThread, &biome_0, &biome_1);
-	myThread1.join();
+	std::thread myThread_0(startThread, &biome_0, &biome_1);
+	myThread_0.join();
 
-	std::thread myThread2(startThread, &biome_1, &biome_2);
-	myThread2.join();
+	std::thread myThread_1(startThread, &biome_1, &biome_2);
+	myThread_1.join();
 
-	std::thread myThread3(startThread, &biome_2, &biome_0);
-	myThread3.join();
+	std::thread myThread_2(startThread, &biome_2, &biome_0);
+	myThread_2.join();
 
+	createWaterLists();
 	generateLists(biome_0_lists, biome_0);
 	generateLists(biome_1_lists, biome_1);
 	generateLists(biome_2_lists, biome_2);
 
-	if (gameStarted) {
-		torusList = glGenLists(1);
-		glNewList(torusList, GL_COMPILE);
-		torus(60, 60);
-		glEndList();
-	}
+	if (gameStarted) createTorusList();
 }
 
 void myRender() {
 	std::this_thread::sleep_for(std::chrono::microseconds(16000));
 
-	GLfloat color[4] = { backgroundColor, backgroundColor, backgroundColor, 1.0 };
-	glFogfv(GL_FOG_COLOR, color);
+	GLfloat fogColor[4] = { sunColor[0] / 255.0f, sunColor[1] / 255.0f, sunColor[2] / 255.0f, 1.0f };
+	glFogfv(GL_FOG_COLOR, fogColor);
 
 	animationController();
 	lightController();
-	if (!manualControl)	airPlaneControl();
-
-	GLfloat ambient[] = { 0.2, 0.2, 0.2, 1.0 };
-	GLfloat diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-	GLfloat specular[] = { 0.8, 0.8, 0.8, 1.0 };
-	GLfloat shininess = 0.1 * 128;
-
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
-	glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+	cameraController();
+	if (isReadyToControl) {
+		if (!manualControl) {
+			airPlaneAutoFlyController();
+		} else airPlaneAutoManualController();
+	}
+	if (isControlSwitched) airPlaneControlSwitchController();
 
 	glCallLists(visibleBiomeWidth * visibleBiomeHeight, GL_UNSIGNED_INT, waterLevel_lists);
 
@@ -1040,42 +1260,33 @@ void myRender() {
 
 	if (gameStarted) {
 	// При попадании в кольцо - оно удаляется из вектора, соответ. необходимо генерировать новое
-		int ringNeed = 100;
+		int ringNeed = 20;
 		if (rings.size() != ringNeed) {
 			for (int i = 0; i < (ringNeed - rings.size()); i++) {
-				// noob : double speed = 1;
-				// default : double speed = getRandomNumber(0.9, 1.2);
-				// master : double speed = getRandomNumber(0.6, 4);
-				double speed = 1.0;// getRandomNumber(0.6, 4.0);
-				double size = getRandomNumber(3.5, 4.5);
+				// noob : GLfloat speed = 1;
+				// default : GLfloat speed = getRandomNumber(0.9, 1.2);
+				// master : GLfloat speed = getRandomNumber(0.6, 4);
+				float speed = getRandomNumber(0.6, 4.0);
+				float size = getRandomNumber(3.5, 4.5);
 
-				double offset_X = getRandomNumber(-10.0, 10.0);
-				double offset_Y = getRandomNumber(0.0, 500.0);
-				double offset_Z = maxHeight;// + (maxHeight / 2) - getRandomNumber(10.0, 11.0);
-
-				/*
-				double xoff = -5 + getRandomNumber(0, 10);
-				double yoff = getRandomNumber(0, 500);
-				double zoff = maxHeight + (maxHeight / 2) - getRandomNumber(10, 15);
-				*/
-
-				double x = offset_X;
-				double y = offset_Y;
-				double z = offset_Z;
+				float x = getRandomNumber(-15.0, 15.0);
+				float y = getRandomNumber(100.0, 500.0);
+				float z = maxHeight;
 
 				// Проверка на дистанцию, если рядом с сгенерируемой координатой в дистанции имеется объект - игнорим добавление 
 				bool distancePassed = true;
 				for (int i = 0; i < rings.size() && distancePassed; i++) {
 					Ring *ring = rings[i];
 					if (ring != NULL) {
-						if (distance(ring->x, ring->y, ring->z, x, y, z) < (ring->size + size) * 5)
+						if (distance(ring->x, ring->y, ring->z, x, y, z) < (ring->size + size) * 5) {
 							distancePassed = false;
+						}
 					}
 				}
 
 				// Также проверим чтобы спавн не происходил вблизи/за самолетом
-				double translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
-				double yPosReal = y - animationTranslationMoment * speed;
+				float translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
+				float yPosReal = y - animationTranslationMoment * speed;
 				if (abs(airPlaneTranslation[1] - yPosReal) < 100) distancePassed = false;
 
 
@@ -1090,12 +1301,12 @@ void myRender() {
 		for (int i = 0; i < rings.size(); i++) {
 			Ring *ring = rings[i];
 			if (ring != NULL) {
-				double translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
-				double yPosReal = ring->y - animationTranslationMoment * ring->speed;
+				float translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
+				float yPosReal = ring->y - animationTranslationMoment * ring->speed;
 				glPushMatrix();
-				glTranslated(ring->x, yPosReal, ring->z);
-				glRotated(90.0, 1.0, 0.0, 0.0);
-				glScaled(ring->size, ring->size, ring->size);
+				glTranslatef(ring->x, yPosReal, ring->z);
+				glRotatef(90.0, 1.0, 0.0, 0.0);
+				glScalef(ring->size, ring->size, ring->size);
 				glCallList(torusList);
 				glPopMatrix();
 			}
@@ -1106,14 +1317,15 @@ void myRender() {
 		for (int i = 0; i < rings.size(); i++) {
 			Ring *ring = rings[i];
 			if (ring != NULL) {
-				double translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
-				double yPosReal = ring->y - animationTranslationMoment * ring->speed;
+				float translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
+				float yPosReal = ring->y - animationTranslationMoment * ring->speed;
 				if (distance(ring->x, yPosReal, ring->z, airPlaneTranslation[0], airPlaneTranslation[1], airPlaneTranslation[2]) < ring->size + 4) {
 					// дистанция очень близкая к самолету
 					// назначим кол-во милиссикунд после которого кольцо пропадет если это еще не сделано
 					if (ring->deadMSeconds == -1) {
 						ring->deadMSeconds = currentMseconds + 1000; // через 1 сек после попадания - кольцо пропадет
-						BASS_ChannelPlay(channel, TRUE);
+						BASS_ChannelPlay(streamHit, TRUE);
+						torusScore++;
 					}
 				}
 				if (ring->deadMSeconds <= currentMseconds) rings.erase(rings.begin() + i);
@@ -1122,13 +1334,13 @@ void myRender() {
 		}
 	}
 
-	drawAirPlane();
+	if (viewMode != 0) drawAirPlane();
 }
 //===========================================
 
 int prevMouseCoord_X = 0, prevMouseCoord_Y = 0; // Старые координаты мыши
 
-void mouseEvent(OpenGL *ogl, int mouseCoord_X, int mouseCoord_Y) {
+void mouseEvent(OpenGL *ogl, GLint mouseCoord_X, GLint mouseCoord_Y) {
 	if (operatorMode) {
 		int dx = prevMouseCoord_X - mouseCoord_X;
 		int dy = prevMouseCoord_Y - mouseCoord_Y;
@@ -1142,39 +1354,31 @@ void mouseEvent(OpenGL *ogl, int mouseCoord_X, int mouseCoord_Y) {
 		}
 	}
 
-	if (manualControl && !OpenGL::isKeyPressed(VK_LBUTTON)) {
+	if (viewMode == 2 && manualControl && isReadyToControl && !OpenGL::isKeyPressed(VK_LBUTTON)) {
 		LPPOINT POINT = new tagPOINT();
 		GetCursorPos(POINT);
 		ScreenToClient(ogl->getHwnd(), POINT);
 		POINT->y = ogl->getHeight() - POINT->y;
 
 		Ray r = camera.getLookRay(POINT->x, POINT->y);
-		double z = airPlaneTranslation[2];
+		GLfloat z = airPlaneTranslation[2];
 
-		double k = 0, x = 0, y = 0;
+		GLfloat k = 0;
 		if (r.direction.Z() == 0) {
 			k = 0;
 		} else k = (z - r.origin.Z()) / r.direction.Z();
 
-		x = k * r.direction.X() + r.origin.X();
-		y = k * r.direction.Y() + r.origin.Y();
+		GLfloat x = k * r.direction.X() + r.origin.X();
+		GLfloat y = k * r.direction.Y() + r.origin.Y();
 
-		if (y > 0.0) {
-			x = airPlaneTranslation[0];
-			y = 0.0;
+		if (y < 0.0 && y > -30.0) {
+			pointToFly[0] = x;
+			pointToFly[1] = y;
 		}
-
-		prevAirPlaneTranslation[0] = airPlaneTranslation[0];
-		prevAirPlaneTranslation[1] = airPlaneTranslation[1];
-		prevAirPlaneTranslation[2] = airPlaneTranslation[2];
-
-		airPlaneTranslation[0] = x;
-		airPlaneTranslation[1] = y;
-		airPlaneTranslation[2] = z;
 	}
 }
 
-void mouseWheelEvent(OpenGL *ogl, int delta) {
+void mouseWheelEvent(OpenGL *ogl, GLint delta) {
 	if (operatorMode) {
 		if (delta < 0 && camera.camDist <= 1) return;
 		if (delta > 0 && camera.camDist >= 100)	return;
@@ -1183,7 +1387,7 @@ void mouseWheelEvent(OpenGL *ogl, int delta) {
 	}
 }
 
-void keyDownEvent(OpenGL *ogl, int key) {
+void keyDownEvent(OpenGL *ogl, GLint key) {
 	// if (key == 'G') gameStarted = !gameStarted;
 
 	if (key == 'O') {
@@ -1192,39 +1396,60 @@ void keyDownEvent(OpenGL *ogl, int key) {
 			fogMode = true;
 			lightMode = true;
 			textureMode = true;
-			camera.camDist = maxHeight + 20.0;
-			camera.fi1 = M_PI / 180.0 * -90.0;
-			camera.fi2 = M_PI / 180.0 * 45.0;
+			camera.camDist = maxHeight + 20.0f;
+			camera.fi1 = M_PI / 180.0f * -90.0f;
+			camera.fi2 = M_PI / 180.0f * 45.0f;
+		}
+	}
+
+	if (!manualControl) {
+		if (key == '1') viewMode = 0;
+		if (key == '2') viewMode = 1;
+	}
+	if (key == '3') viewMode = 2;
+
+	if (key == 'A') {
+		manualControl = !manualControl;
+		if (manualControl) {
+			isReadyToControl = false;
+			isControlSwitched = true;
+			viewMode = 2;
+		} else {
+			savedAnimStatus = animationAirPlaneMoment;
+			isReadyToControl = false;
+			isControlSwitched = true;
 		}
 	}
 
 	if (key == 'M') {
-		manualControl = !manualControl;
-		airPlaneTranslation[0] = 0.0;
-		airPlaneTranslation[1] = 0.0;
-		if (manualControl) {
-			airPlaneTranslation[2] = maxHeight;
-		} else airPlaneTranslation[2] = maxHeight + 5.0;
+		isMusicStoped = !isMusicStoped;
+		if (isMusicStoped) {
+			BASS_ChannelStop(streamMusic);
+		} else BASS_ChannelPlay(streamMusic, TRUE);
 	}
 
 	if (operatorMode) {
 		if (key == 'F') fogMode = !fogMode;
 		if (key == 'L') lightMode = !lightMode;
 		if (key == 'T') textureMode = !textureMode;
-		if (key == 'J') lightLockMode = !lightLockMode;
+		if (key == 'J') {
+			for (int i = 0; i < 3; i++) sunColor[i] = 255.0f;
+			lightLockMode = !lightLockMode;
+		}
 		if (key == 'R') {
+			viewMode = 2;
 			fogMode = true;
 			lightMode = true;
 			textureMode = true;
-			camera.camDist = maxHeight + 20.0;
-			camera.fi1 = M_PI / 180.0 * -90.0;
-			camera.fi2 = M_PI / 180.0 * 45.0;
-			animationLightMoment = 0.0;
+			camera.camDist = maxHeight + 20.0f;
+			camera.fi1 = M_PI / 180.0f * -90.0f;
+			camera.fi2 = M_PI / 180.0f * 45.0f;
+			animationLightMoment = 0.0f;
 		}
 	}
 }
 
-void keyUpEvent(OpenGL *ogl, int key) {
+void keyUpEvent(OpenGL *ogl, GLint key) {
 
 }
 
@@ -1241,13 +1466,9 @@ void initRender(OpenGL *ogl) {
 	glEnable(GL_LINE_SMOOTH); // устранение ступенчатости для линий
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
 
-	int end = polygonNumberPerSide * polygonSize * 1.5;
-
 	glFogi(GL_FOG_MODE, GL_LINEAR);
 	glFogf(GL_FOG_DENSITY, 0.35);
 	glHint(GL_FOG_HINT, GL_DONT_CARE);
-	glFogf(GL_FOG_START, end / 5.0);
-	glFogf(GL_FOG_END, end);
 }
 
 void drawMessage(OpenGL *ogl) {
@@ -1265,25 +1486,40 @@ void drawMessage(OpenGL *ogl) {
 	glDisable(GL_LIGHTING);
 
 	GuiTextRectangle rec;			// классик моего авторства для удобной работы с рендером текста.
-	rec.setSize(300, 300);
-	rec.setPosition(10, ogl->getHeight() - 300 - 10);
+	rec.setSize(500, 1000);
+	rec.setPosition(10, ogl->getHeight() - 1000 - 10);
 
 	std::stringstream ss;
 
-	double angle = 360.0 * animationLightMoment / (polygonSize * polygonNumberPerSide * visibleBiomeWidth);
+	float angle = 360.0 * animationLightMoment / (polygonSize * polygonNumberPerSide * visibleBiomeWidth);
 	int hours = (int) round(angle) / 15 + 6;
 	int minutes = (angle - (hours - 6.0) * 15.0) * 4 + 2;
 	if (hours >= 24) hours = hours - 24;
 	ss << "Time: " << hours << ":" << minutes << std::endl;
 
-	if (angle <= 30.0) {
-		backgroundColor = angle / 30.0;
-	} else if (angle > 30.0 && angle < 150.0) {
-		backgroundColor = 1.0;
-	} else if (angle >= 150.0 && angle < 180.0) {
-		backgroundColor = (180.0 - angle) / 30.0;
+	if (angle > 333.0f && angle <= 356.0f) {
+		backgroundColor = (angle - 333.0f) / (356.0f - 333.0f);
+	} else if (angle > 195.0f && angle <= 217.0f) {
+		backgroundColor = 1.0f - (angle - 195.0f) / (217.0f - 195.0f);
 	}
-	glClearColor(backgroundColor, backgroundColor, backgroundColor, 1.0);
+
+	if (angle > 333.0f) {
+		if (sunColor[0] + (255.0f / 255.0f) * 3.0f < 255.0f) sunColor[0] += (255.0f / 255.0f) * 3.0f;
+		if (sunColor[1] + (225.0f / 255.0f) * 3.0f < 255.0f) sunColor[1] += (225.0f / 255.0f) * 3.0f;
+		if (sunColor[2] + (195.0f / 255.0f) * 3.0f < 255.0f) sunColor[2] += (195.0f / 255.0f) * 3.0f;
+	} else if (angle > 195.0f) {
+		if (sunColor[0] - (255.0f / 255.0f) * 3.0f > 0.0f) sunColor[0] -= (255.0f / 255.0f) * 3.0f;
+		if (sunColor[1] - (225.0f / 255.0f) * 3.0f > 0.0f) sunColor[1] -= (225.0f / 255.0f) * 3.0f;
+		if (sunColor[2] - (195.0f / 255.0f) * 3.0f > 0.0f) sunColor[2] -= (195.0f / 255.0f) * 3.0f;
+	}
+
+	glClearColor(sunColor[0] / 255.0f, sunColor[1] / 255.0f, sunColor[2] / 255.0f, 1.0f);
+	GLfloat diffuse[] = {
+		sunColor[0] / 255.0f,
+		sunColor[1] / 255.0f,
+		sunColor[2] / 255.0f, 1.0f
+	};
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
 
 	ss << "Biome: ";
 	int biomeId = 0;
@@ -1340,27 +1576,44 @@ void drawMessage(OpenGL *ogl) {
 			ss << "Hills (Sand)" << std::endl;
 			break;
 	}
+
 	std::string manualStatus = manualControl ? " [вкл]" : " [выкл]";
-	ss << "M - вкл/выкл режима пилота" << manualStatus << std::endl << std::endl;
+	std::string musicStatus = isMusicStoped ? " [выключена]" : " [включена]";
+	ss << "Колец собрано: " << torusScore << std::endl;
+	ss << "M - вкл/выкл музыку" << musicStatus << std::endl;
+	ss << "A - вкл/выкл режима пилота" << manualStatus << std::endl << std::endl;
+	ss << "1 - вид от кабины пилота" << std::endl;
+	ss << "2 - вид за самолетом" << std::endl;
+	ss << "3 - закрепленный вид" << std::endl << std::endl;
 
 	if (operatorMode) {
 		std::string textureStatus = textureMode ? " [вкл]" : " [выкл]";
+		std::string fogStatus = fogMode ? " [вкл]" : " [выкл]";
 		std::string lightStatus = lightMode ? " [вкл]" : " [выкл]";
 		std::string lightLockStatus = lightLockMode ? " [вкл]" : " [выкл]";
 
 		ss << "РЕЖИМ ОПЕРАТОРА" << std::endl << std::endl;
 		ss << "T - вкл/выкл текстур" << textureStatus << std::endl;
+		ss << "F - вкл/выкл туман" << fogStatus << std::endl;
 		ss << "L - вкл/выкл освещение" << lightStatus << std::endl;
 		ss << "J - блокировка смены суток" << lightLockStatus << std::endl << std::endl;
+
 		ss << "animationTranslationMoment: " << animationTranslationMoment << std::endl;
 		ss << "animationLightMoment: " << animationLightMoment << std::endl;
+		ss << "animationAirPlaneMoment: " << animationAirPlaneMoment << std::endl;
+		ss << "angle: " << angle << std::endl;
+		ss << "sunColor: (" << sunColor[0] << ", " << sunColor[1] << ", " << sunColor[2] << ")" << std::endl;
+		ss << "backgroundColor: " << backgroundColor << std::endl;
 		ss << "start_new: " << start_new << std::endl;
-		ss << "thread_done: " << thread_done << std::endl;
+		ss << "thread_done: " << thread_done << std::endl << std::endl;
+
+		ss << "AirPlane Pos.: (" << airPlaneTranslation[0] << ", " << airPlaneTranslation[1] << ", " << airPlaneTranslation[2] << ")" << std::endl;
+		ss << "PointToFly: (" << pointToFly[0] << ", " << pointToFly[1] << ")" << std::endl;
+		ss << "Light Pos.: (" << light.pos.X() << ", " << light.pos.Y() << ", " << light.pos.Z() << ")" << std::endl;
+		ss << "Camera Pos.: (" << camera.pos.X() << ", " << camera.pos.Y() << ", " << camera.pos.Z() << ")" << std::endl;
+		ss << "Cam Look: (" << camera.lookPoint.X() << ", " << camera.lookPoint.Y() << ", " << camera.lookPoint.Z() << ")" << std::endl;
+		ss << "Cam Params: R=" << camera.camDist << ", fi1=" << camera.fi1 << ", fi2=" << camera.fi2 << std::endl;
 	}
-	//ss << "Коорд. света: (" << light.pos.X() << ", " << light.pos.Y() << ", " << light.pos.Z() << ")" << std::endl;
-	//ss << "Коорд. камеры: (" << camera.pos.X() << ", " << camera.pos.Y() << ", " << camera.pos.Z() << ")" << std::endl;
-	//ss << "Cam Coords: (" << camera.lookPoint.X() << ", " << camera.lookPoint.Y() << ", " << camera.lookPoint.Z() << ")" << std::endl;
-	//ss << "Cam Param: R=" << camera.camDist << ", fi1=" << camera.fi1 << ", fi2=" << camera.fi2 << std::endl;
 
 	rec.setText(ss.str().c_str());
 	rec.Draw();
@@ -1382,7 +1635,6 @@ void Render(OpenGL *ogl) {
 	// Чтоб было красиво, без квадратиков (сглаживание освещения)
 	glShadeModel(GL_SMOOTH);
 	//===================================
-	// Прогать тут
 	myRender();
 	//===================================
 	drawMessage(ogl);
