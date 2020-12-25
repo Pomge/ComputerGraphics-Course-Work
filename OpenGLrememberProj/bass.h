@@ -586,14 +586,14 @@ user   : The 'user' parameter value given when calling BASS_StreamCreateURL */
 #define BASS_SYNC_MIXTIME		0x40000000	// flag: sync at mixtime, else at playtime
 #define BASS_SYNC_ONETIME		0x80000000	// flag: sync only once, else continuously
 
-typedef void (CALLBACK SYNCPROC)(HSYNC handle, DWORD channel, DWORD data, void *user);
+typedef void (CALLBACK SYNCPROC)(HSYNC handle, DWORD channelHit, DWORD data, void *user);
 /* Sync callback function.
 handle : The sync that has occured
 channel: Channel that the sync occured in
 data   : Additional data associated with the sync's occurance
 user   : The 'user' parameter given when calling BASS_ChannelSetSync */
 
-typedef void (CALLBACK DSPPROC)(HDSP handle, DWORD channel, void *buffer, DWORD length, void *user);
+typedef void (CALLBACK DSPPROC)(HDSP handle, DWORD channelHit, void *buffer, DWORD length, void *user);
 /* DSP callback function.
 handle : The DSP handle
 channel: Channel that the DSP is being applied to

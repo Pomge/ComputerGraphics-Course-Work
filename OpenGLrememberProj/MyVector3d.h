@@ -13,7 +13,6 @@ class Vector3 {
 	double coords[3];
 
 public:
-
 	inline double X() {
 		return coords[0];
 	}
