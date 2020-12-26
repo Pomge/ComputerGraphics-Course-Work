@@ -3,28 +3,28 @@
 #include <vector>
 
 std::string __digits1 = "0123456789-.";
-int ReadDouble(std::string &s, int *pos, double *value) {
-	int start_pos = s.find_first_of(__digits1, *pos);
+int ReadDouble(std::string &s, int *position, double *value) {
+	int start_pos = s.find_first_of(__digits1, *position);
 	int end_pos = s.find_first_not_of(__digits1, start_pos);
 
 	if (start_pos == std::string::npos) return 0;
 	if (end_pos == std::string::npos) end_pos = s.size();
 	std::string dbl_str = s.substr(start_pos, end_pos - start_pos);
 	*value = atof(dbl_str.c_str());
-	*pos = end_pos;
+	*position = end_pos;
 	return 1;
 }
 
 std::string __digits2 = "0123456789";
-int ReadUInt(std::string &s, int *pos, unsigned int *value) {
-	int start_pos = s.find_first_of(__digits2, *pos);
+int ReadUInt(std::string &s, int *position, unsigned int *value) {
+	int start_pos = s.find_first_of(__digits2, *position);
 	int end_pos = s.find_first_not_of(__digits2, start_pos);
 
 	if (start_pos == std::string::npos) return 0;
 	if (end_pos == std::string::npos) end_pos = s.size();
 	std::string dbl_str = s.substr(start_pos, end_pos - start_pos);
 	*value = atol(dbl_str.c_str());
-	*pos = end_pos;
+	*position = end_pos;
 	return 1;
 }
 
@@ -72,32 +72,32 @@ int loadModel(char *filename, ObjFile *file) {
 			str.append(cur, strsize);
 			//objStrings.push_back(_new);
 			while (1) {
-				size_t pos = 0;
+				size_t position = 0;
 
 				// описание вершины
 				if (str.find("v ") == 0) {
 					DWORD tick1 = GetTickCount();
-					int pos = 2;
+					int position = 2;
 					ObjVertex vert;
 					double v;
 
 					//X
-					if (ReadDouble(str, &pos, &v)) {
+					if (ReadDouble(str, &position, &v)) {
 						vert.x = v;
 					} else return -1;
 
 					// Y
-					if (ReadDouble(str, &pos, &v)) {
+					if (ReadDouble(str, &position, &v)) {
 						vert.y = v;
 					} else return -2;
 
 					// Z
-					if (ReadDouble(str, &pos, &v)) {
+					if (ReadDouble(str, &position, &v)) {
 						vert.z = v;
 					} else return -3;
 
 					// W = 1 def
-					if (ReadDouble(str, &pos, &v)) vert.w = v;
+					if (ReadDouble(str, &position, &v)) vert.w = v;
 
 					vert.w = 1;
 					V.push_back(vert);
@@ -109,19 +109,19 @@ int loadModel(char *filename, ObjFile *file) {
 				if (str.find("vt ") == 0) {
 					DWORD tick1 = GetTickCount();
 
-					int pos = 2;
+					int position = 2;
 					ObjTexCord tex;
 					double v;
 
-					if (ReadDouble(str, &pos, &v)) {//u
+					if (ReadDouble(str, &position, &v)) {//u
 						tex.u = v;
 					} else return -4;
 
-					if (ReadDouble(str, &pos, &v)) {//v
+					if (ReadDouble(str, &position, &v)) {//v
 						tex.v = v;
 					} else return -5;
 
-					if (ReadDouble(str, &pos, &v)) tex.w = v; //w   =   0   def
+					if (ReadDouble(str, &position, &v)) tex.w = v; //w   =   0   def
 						
 					tex.w = 0;
 					VT.push_back(tex);
@@ -133,22 +133,22 @@ int loadModel(char *filename, ObjFile *file) {
 				if (str.find("vn ") == 0) {
 					DWORD tick1 = GetTickCount();
 
-					int pos = 2;
+					int position = 2;
 					double v;
 					ObjNormal norm;
 
 					// N - X
-					if (ReadDouble(str, &pos, &v)) {
+					if (ReadDouble(str, &position, &v)) {
 						norm.x = v;
 					} else return -6;
 
 					// N - Y
-					if (ReadDouble(str, &pos, &v)) {
+					if (ReadDouble(str, &position, &v)) {
 						norm.y = v;
 					} else return -7;
 
 					// N - Z
-					if (ReadDouble(str, &pos, &v)) { 
+					if (ReadDouble(str, &position, &v)) { 
 						norm.z = v;
 					} else return -8;
 
@@ -165,7 +165,7 @@ int loadModel(char *filename, ObjFile *file) {
 					bool isHaveNormals = false;
 
 					unsigned int d1; // временный буфер для чтения числа
-					int pos = 1;
+					int position = 1;
 					std::vector<unsigned int> Vertexes;
 					std::vector<unsigned int> TexCoords;
 					std::vector<unsigned int> Normals;
@@ -175,28 +175,28 @@ int loadModel(char *filename, ObjFile *file) {
 					file->Faces.push_back(ObjFace());
 					std::list<ObjFace>::reverse_iterator it = file->Faces.rbegin();
 
-					while (ReadUInt(str, &pos, &d1)) {
+					while (ReadUInt(str, &position, &d1)) {
 						v = d1; // точка
 						t = 0;
 						n = 0;
 						it->vertex.push_back(V[v - 1]);
 
-						if (str[pos] == ' ') break;
-						if (str[pos] == '/' && str[pos + 1] == '/') {
+						if (str[position] == ' ') break;
+						if (str[position] == '/' && str[position + 1] == '/') {
 							// нормаль без текстуры
-							if (ReadUInt(str, &pos, &d1)) {	
+							if (ReadUInt(str, &position, &d1)) {	
 								n = d1;
 							} else return -9;
-						} else if (str[pos] == '/') {
+						} else if (str[position] == '/') {
 							// читаем текстуру
-							if (ReadUInt(str, &pos, &d1)) {
+							if (ReadUInt(str, &position, &d1)) {
 								t = d1;
 							} else return -10;
 
-							if (str[pos] == ' ') break;
+							if (str[position] == ' ') break;
 
 							// нормаль, при условии наличия текстуры
-							if (ReadUInt(str, &pos, &d1)) {
+							if (ReadUInt(str, &position, &d1)) {
 								n = d1;
 							} else return -11;
 						}

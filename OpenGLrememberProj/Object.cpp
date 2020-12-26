@@ -8,5 +8,5 @@ void Object::movie(GLdouble x, GLdouble y, GLdouble z)
 
 void Object::movie(Vector3 &v)
 {
-	pos = pos + v;
+	position = position + v;
 }
