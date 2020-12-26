@@ -1036,8 +1036,8 @@ const BASS_PLUGININFO *BASSDEF(BASS_PluginGetInfo)(HPLUGIN handle);
 
 BOOL BASSDEF(BASS_Set3DFactors)(float distf, float rollf, float doppf);
 BOOL BASSDEF(BASS_Get3DFactors)(float *distf, float *rollf, float *doppf);
-BOOL BASSDEF(BASS_Set3DPosition)(const BASS_3DVECTOR *pos, const BASS_3DVECTOR *vel, const BASS_3DVECTOR *front, const BASS_3DVECTOR *top);
-BOOL BASSDEF(BASS_Get3DPosition)(BASS_3DVECTOR *pos, BASS_3DVECTOR *vel, BASS_3DVECTOR *front, BASS_3DVECTOR *top);
+BOOL BASSDEF(BASS_Set3DPosition)(const BASS_3DVECTOR *position, const BASS_3DVECTOR *vel, const BASS_3DVECTOR *front, const BASS_3DVECTOR *top);
+BOOL BASSDEF(BASS_Get3DPosition)(BASS_3DVECTOR *position, BASS_3DVECTOR *vel, BASS_3DVECTOR *front, BASS_3DVECTOR *top);
 void BASSDEF(BASS_Apply3D)();
 #if defined(_WIN32) && !defined(_WIN32_WCE) && !(WINAPI_FAMILY && WINAPI_FAMILY!=WINAPI_FAMILY_DESKTOP_APP)
 BOOL BASSDEF(BASS_SetEAXParameters)(int env, float vol, float decay, float damp);
@@ -1078,8 +1078,8 @@ BOOL BASSDEF(BASS_RecordSetInput)(int input, DWORD flags, float volume);
 DWORD BASSDEF(BASS_RecordGetInput)(int input, float *volume);
 HRECORD BASSDEF(BASS_RecordStart)(DWORD freq, DWORD chans, DWORD flags, RECORDPROC *proc, void *user);
 
-double BASSDEF(BASS_ChannelBytes2Seconds)(DWORD handle, QWORD pos);
-QWORD BASSDEF(BASS_ChannelSeconds2Bytes)(DWORD handle, double pos);
+double BASSDEF(BASS_ChannelBytes2Seconds)(DWORD handle, QWORD position);
+QWORD BASSDEF(BASS_ChannelSeconds2Bytes)(DWORD handle, double position);
 DWORD BASSDEF(BASS_ChannelGetDevice)(DWORD handle);
 BOOL BASSDEF(BASS_ChannelSetDevice)(DWORD handle, DWORD device);
 DWORD BASSDEF(BASS_ChannelIsActive)(DWORD handle);
@@ -1099,10 +1099,10 @@ BOOL BASSDEF(BASS_ChannelSetAttributeEx)(DWORD handle, DWORD attrib, void *value
 DWORD BASSDEF(BASS_ChannelGetAttributeEx)(DWORD handle, DWORD attrib, void *value, DWORD size);
 BOOL BASSDEF(BASS_ChannelSet3DAttributes)(DWORD handle, int mode, float min, float max, int iangle, int oangle, float outvol);
 BOOL BASSDEF(BASS_ChannelGet3DAttributes)(DWORD handle, DWORD *mode, float *min, float *max, DWORD *iangle, DWORD *oangle, float *outvol);
-BOOL BASSDEF(BASS_ChannelSet3DPosition)(DWORD handle, const BASS_3DVECTOR *pos, const BASS_3DVECTOR *orient, const BASS_3DVECTOR *vel);
-BOOL BASSDEF(BASS_ChannelGet3DPosition)(DWORD handle, BASS_3DVECTOR *pos, BASS_3DVECTOR *orient, BASS_3DVECTOR *vel);
+BOOL BASSDEF(BASS_ChannelSet3DPosition)(DWORD handle, const BASS_3DVECTOR *position, const BASS_3DVECTOR *orient, const BASS_3DVECTOR *vel);
+BOOL BASSDEF(BASS_ChannelGet3DPosition)(DWORD handle, BASS_3DVECTOR *position, BASS_3DVECTOR *orient, BASS_3DVECTOR *vel);
 QWORD BASSDEF(BASS_ChannelGetLength)(DWORD handle, DWORD mode);
-BOOL BASSDEF(BASS_ChannelSetPosition)(DWORD handle, QWORD pos, DWORD mode);
+BOOL BASSDEF(BASS_ChannelSetPosition)(DWORD handle, QWORD position, DWORD mode);
 QWORD BASSDEF(BASS_ChannelGetPosition)(DWORD handle, DWORD mode);
 DWORD BASSDEF(BASS_ChannelGetLevel)(DWORD handle);
 BOOL BASSDEF(BASS_ChannelGetLevelEx)(DWORD handle, float *levels, float length, DWORD flags);

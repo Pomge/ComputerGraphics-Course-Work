@@ -2,7 +2,7 @@
 #include "OpenGLrememberProj.h"
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // Исключите редко используемые компоненты из заголовков Windows
+#define WIN32_LEAN_AND_MEAN	// Исключите редко используемые компоненты из заголовков Windows
 
 // Файлы заголовков Windows:
 #include <windows.h>
@@ -20,9 +20,9 @@
 #define MAX_LOADSTRING 100
 
 // Глобальные переменные:
-HINSTANCE hInst;								// Текущий экземпляр
-TCHAR szTitle[MAX_LOADSTRING];					// Текст строки заголовка
-TCHAR szWindowClass[MAX_LOADSTRING];			// Имя класса главного окна
+HINSTANCE hInst;						// Текущий экземпляр
+TCHAR szTitle[MAX_LOADSTRING];			// Текст строки заголовка
+TCHAR szWindowClass[MAX_LOADSTRING];	// Имя класса главного окна
 
 // Отправить объявления функций, включенных в этот модуль кода:
 ATOM				MyRegisterClass(HINSTANCE hInstance);

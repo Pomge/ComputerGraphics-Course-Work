@@ -84,7 +84,7 @@ void OpenGL::render() {
 
 	//отключаем проверку Z буфера для прорисовки "лампочки" сквозь объекты
 	//glDisable(GL_DEPTH_TEST);
-	mainLight->DrawLightGhismo();
+	mainLight->DrawLightSource();
 
 	SwapBuffers(g_hDC);
 }
@@ -97,7 +97,6 @@ void OpenGL::resize(int w, int h) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	// 45.0, 1024.0
 	gluPerspective(85.0, (GLdouble) width / (GLdouble) height, 0.1, 1024.0);
 
 	glMatrixMode(GL_MODELVIEW);
@@ -140,7 +139,7 @@ void OpenGL::init(void) {
 
 	// до сюда - обязательные функции инициализации 
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnable(GL_DEPTH_TEST);
 
 	// выполняем пользовательские функции инфициализации

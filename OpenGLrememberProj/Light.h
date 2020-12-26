@@ -3,12 +3,10 @@
 
 #include "Object.h"
 
-class Light : public Object
-{
+class Light : public Object {
 public:
-	virtual void DrawLightGhismo()=0;
-	virtual void SetUpLight()=0;
+	virtual void DrawLightSource() = 0;
+	virtual void SetUpLight() = 0;
 };
-
 
 #endif

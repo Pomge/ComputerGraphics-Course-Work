@@ -11,7 +11,7 @@
 //абстрактный объект
 class Object {
 public:
-	Vector3 pos;
+	Vector3 position;
 
 	virtual void movie(GLdouble x, GLdouble y, GLdouble z);
 
@@ -36,7 +36,7 @@ public:
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 		glRotated(angle, rotateAxe.X(), rotateAxe.Y(), rotateAxe.Z());
-		glTranslated(pos.X(), pos.Y(), pos.Z());
+		glTranslated(position.X(), position.Y(), position.Z());
 		glScaled(scale.X(), scale.Y(), scale.Z());
 		RenderObject();
 		glPopMatrix();
