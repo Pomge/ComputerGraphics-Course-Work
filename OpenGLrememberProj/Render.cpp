@@ -27,8 +27,8 @@
 // Struct for biome parameters [watch string 66: Biome generation parameters]
 struct BiomeParams {
 	GLushort biomeId;		// Biome id
-	GLfloat minAltitude;	// Min height
-	GLfloat maxAltitude;	// Max height
+	GLfloat minAltitude;		// Min height
+	GLfloat maxAltitude;		// Max height
 	GLfloat scale;			// Scale
 };
 
@@ -43,23 +43,23 @@ struct Material {
 
 // *** *** *** *** *** *** *** ***  Parameters that can be changed  *** *** *** *** *** *** *** ***
 // FPS parameters
-GLushort FPS_MIN = 60;				// Must be defined			| Default: 30
-const GLshort FPS_MAX = 60;			// Work if FPS_MAX (0; 200)	| Default: 60
+GLushort FPS_MIN = 60;			// Must be defined			| Default: 30
+const GLshort FPS_MAX = 60;		// Work if FPS_MAX (0; 200)		| Default: 60
 const GLfloat maxHeight = 30.0f;	// Max height				| Deafult: 30.0f
 
 // Parameters of the rendered area (better not touch it)
 // Fast switching, works if quickMultiplier > 1
 // Automatically determines the values for:
 // polygonSize, polygonNumberPerSide, polygonNumberInChunk, BiomeParams.scale
-const GLushort quickMultiplier = 7;	// The lower, the easier the render (work if quickMultiplier > 1) | Default: 7
-GLfloat polygonSize = pow(2, -1);								// Change only the exponent	| Default: -1
-GLuint polygonNumberPerSide = (int) pow(2, 8);					// Change only the exponent | Default: 8
-const GLushort visibleBiomeHeight = 2;							// Visible biome height		| Default: 2
-const GLushort visibleBiomeWidth = 2 * visibleBiomeHeight + 1;	// Visible biome width		| Default: 2 * visibleBiomeHeight + 1
+const GLushort quickMultiplier = 7;	// The lower, the easier the render (work if quickMultiplier > 1) 	| Default: 7
+GLfloat polygonSize = pow(2, -1);						// Change only the exponent	| Default: -1
+GLuint polygonNumberPerSide = (int) pow(2, 8);					// Change only the exponent 	| Default: 8
+const GLushort visibleBiomeHeight = 2;						// Visible biome height		| Default: 2
+const GLushort visibleBiomeWidth = 2 * visibleBiomeHeight + 1;			// Visible biome width		| Default: 2 * visibleBiomeHeight + 1
 
 // Ground cover levels parameters
 const GLfloat waterLevel = 0.0f;	// Water level height							| Default: 0.0f
-const GLfloat groundLevel = 5.0f;	// Ground level height (grass, sand, snow)		| Default: 5.0f
+const GLfloat groundLevel = 5.0f;	// Ground level height (grass, sand, snow)				| Default: 5.0f
 const GLfloat stoneLevel = 20.0f;	// Stone level height							| Default: 20.0f
 const GLfloat snowLevel = 25.0f;	// Snow level height (snow caps of mountains)	| Default: 25.0f
 
@@ -69,29 +69,29 @@ const GLfloat snowLevel = 25.0f;	// Snow level height (snow caps of mountains)	|
 // * Don't change the id!
 // * The larger the scale, the greater the relief
 std::vector<BiomeParams> biomeParams = {
-	{ 0, -5.0f,			waterLevel,		2 },	// Ocean
-	{ 1, waterLevel,	groundLevel,	2 },	// Plain (earthy)
-	{ 2, waterLevel,	groundLevel,	2 },	// Plain (snowy)
-	{ 3, waterLevel,	groundLevel,	1 },	// Plain (sandy)
-	{ 4, -groundLevel,	groundLevel,	1 },	// Swamp
-	{ 5, waterLevel,	snowLevel,		0 },	// Mountains
-	{ 6, -groundLevel,	snowLevel,		0 },	// Mountains (with water)
-	{ 7, -groundLevel,	groundLevel,	3 },	// Shores (earthy)
-	{ 8, -groundLevel,	groundLevel,	3 },	// Shores (snowy)
-	{ 9, -groundLevel,	groundLevel,	3 },	// Shores (sandy)
-	{ 10, -waterLevel,	groundLevel,	0 },	// Hills (earthy)
-	{ 11, -waterLevel,	groundLevel,	0 },	// Hills (snowy)
-	{ 12, -waterLevel,	groundLevel,	0 }		// Hills (sandy)
+	{ 0, 	-5.0f,		waterLevel,	2 },	// Ocean
+	{ 1, 	waterLevel,	groundLevel,	2 },	// Plain (earthy)
+	{ 2, 	waterLevel,	groundLevel,	2 },	// Plain (snowy)
+	{ 3, 	waterLevel,	groundLevel,	1 },	// Plain (sandy)
+	{ 4, 	-groundLevel,	groundLevel,	1 },	// Swamp
+	{ 5, 	waterLevel,	snowLevel,	0 },	// Mountains
+	{ 6, 	-groundLevel,	snowLevel,	0 },	// Mountains (with water)
+	{ 7, 	-groundLevel,	groundLevel,	3 },	// Shores (earthy)
+	{ 8, 	-groundLevel,	groundLevel,	3 },	// Shores (snowy)
+	{ 9, 	-groundLevel,	groundLevel,	3 },	// Shores (sandy)
+	{ 10, 	-waterLevel,	groundLevel,	0 },	// Hills (earthy)
+	{ 11, 	-waterLevel,	groundLevel,	0 },	// Hills (snowy)
+	{ 12, 	-waterLevel,	groundLevel,	0 }	// Hills (sandy)
 };
 
 // Texture names (better not touch it)
 // * But you can change the texture files (bmp, 24 bit - required)
 const std::string textureNames[] = {
-	"water.bmp",				// 0 - water texture
-	"grass.bmp",				// 1 - grass texture
-	"snow.bmp",					// 2 - snow texture
-	"sand.bmp",					// 3 - sand texture
-	"stone.bmp"					// 4 - stone texture
+	"water.bmp",			// 0 - water texture
+	"grass.bmp",			// 1 - grass texture
+	"snow.bmp",			// 2 - snow texture
+	"sand.bmp",			// 3 - sand texture
+	"stone.bmp"			// 4 - stone texture
 };
 
 // Colors parameters
@@ -113,7 +113,7 @@ const std::vector <Material> materials = {
 };
 
 // Animation parameters
-const GLfloat animationSpeed = 0.25f;			// Default: 0.25f
+const GLfloat animationSpeed = 0.25f;		// Default: 0.25f
 const GLfloat animationAirCraftSpeed = 0.005f;	// Default: 0.005f
 //************************************************************************************************
 
@@ -157,10 +157,10 @@ public:
 		GLfloat ambient[] = { 0.05f, 0.05f, 0.05f, 1.0f };	// Ambient color
 		GLfloat specular[] = { 0.5f, 0.5f, 0.5f, 1.0f };	// Specular color
 
-		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);			// Setting ambient color
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);		// Setting ambient color
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);		// Setting specular color
 
-		glEnable(GL_LIGHT0);								// Sets the light source
+		glEnable(GL_LIGHT0);					// Sets the light source
 	}
 } myLight;
 
@@ -199,7 +199,7 @@ public:
 	GLfloat lowerRight[3];			// Lower right point for polygon
 	GLfloat upperRight[3];			// Upper left point for polygon
 	GLfloat upperLeft[3];			// Upper right point for polygon
-	GLfloat center[3];				// Center point for polygon
+	GLfloat center[3];			// Center point for polygon
 
 	GLfloat lowerTriangleNormal[3];	// Normal for lower triangle
 	GLfloat rightTriangleNormal[3];	// Normal for right triangle
@@ -259,8 +259,8 @@ public:
 class Chunk {
 public:
 	std::vector <TriangularSquare_withNormals> chunkPolygons;	// All polygons in chunk
-	std::vector <GLfloat> rightSide_EndCoords;					// Right side end coordinates
-	std::vector <GLfloat> upperSide_EndCoords;					// Upper side end coordinates
+	std::vector <GLfloat> rightSide_EndCoords;			// Right side end coordinates
+	std::vector <GLfloat> upperSide_EndCoords;			// Upper side end coordinates
 
 	std::vector <GLuint> heightIds;
 	std::vector <GLuint> textureIds;
@@ -289,9 +289,9 @@ struct Ring {
 // Class for biome generating and drawing
 class Biome {
 public:
-	std::vector <Chunk> chunks;								// All chunks in biome
+	std::vector <Chunk> chunks;				// All chunks in biome
 	std::vector <std::vector <GLfloat>> biome_EndCoords;	// Biome upper end coordinates
-	BiomeParams biomeParams;								// Biome generating parameters
+	BiomeParams biomeParams;				// Biome generating parameters
 
 	Biome() {
 		this->biomeParams = ::biomeParams[0];
@@ -300,66 +300,66 @@ public:
 
 // Additional parameters and rendering options
 GLboolean operatorMode = false;		// Is "Operator mode" enabled	| Default: false
-GLboolean gameStarted = true;		// Is game started				| Default: true
-GLboolean fogMode = true;			// Is fog enabled				| Default: true
-GLboolean lightMode = true;			// Is light enabled				| Default: true
-GLboolean textureMode = true;		// Is textures enabled			| Default: true
-GLboolean lightLockMode = false;	// Is light locked				| Default: false
+GLboolean gameStarted = true;		// Is game started		| Default: true
+GLboolean fogMode = true;		// Is fog enabled		| Default: true
+GLboolean lightMode = true;		// Is light enabled		| Default: true
+GLboolean textureMode = true;		// Is textures enabled		| Default: true
+GLboolean lightLockMode = false;	// Is light locked		| Default: false
 GLboolean isMusicStoped = false;	// Indicates whether to turn off the music
 GLuint polygonNumberInChunk = (int) pow(polygonNumberPerSide, 2);	// Number of polygons in a chunk
 ObjFile airCraftModel, moonModel;	// Objects (.obj)
-GLushort currentBiomeId;			// ID of current biome
+GLushort currentBiomeId;		// ID of current biome
 GLushort currentBiomeLength;		// Specifies how many biomes with the same id will be generated
 GLushort translateIndexator;		// Specifies which biomes to interact with
-GLfloat sunColor[3];				// Sun, fog, background color
+GLfloat sunColor[3];			// Sun, fog, background color
 
 // Display lists for biome, game and other
-std::vector<Ring *> rings;											// Rings array
-GLuint torusList;													// Torus list
-Biome biome_0, biome_1, biome_2;									// Biomes
+std::vector<Ring *> rings;						// Rings array
+GLuint torusList;							// Torus list
+Biome biome_0, biome_1, biome_2;					// Biomes
 GLuint waterLevel_lists[visibleBiomeWidth * visibleBiomeHeight];	// Water level lists
 GLuint biome_0_lists[visibleBiomeWidth * visibleBiomeHeight];		// Display lists for biome_0
 GLuint biome_1_lists[visibleBiomeWidth * visibleBiomeHeight];		// Display lists for biome_1 
 GLuint biome_2_lists[visibleBiomeWidth * visibleBiomeHeight];		// Display lists for biome_2
 
 // Thread params
-std::mutex cout_guard;						// To synchronize threads
+std::mutex cout_guard;				// To synchronize threads
 std::atomic<bool> start_new { true };		// Indicates when to start generating a new biome
 std::atomic<bool> thread_done { false };	// Indicates when a new biome is generated
 
 // Aircraft control parameters
-GLushort torusScore = 0;				// Counter of collected rings							(Do not touch)
-GLushort viewMode = 2;					// вид на самолет: от кабины, с хвоста, по умолчанию	(Do not touch)
-GLfloat pointToFly[2];					// точка, к которой должен лететь самолет				(Do not touch)
-GLfloat savedAnimationStatus;			// сохраняет статус анимации							(Do not touch)
-GLboolean isControlSwitched = false;	// определение переключения режима управления			(Do not touch)
-GLboolean isReadyToControl = true;		// уведомляет о готовности передать контроль			(Do not touch)
-GLboolean manualControl = false;		// режим управления самолетом							(Do not touch)
-GLfloat airCraftTranslation[3];			// текущие координаты самолета							(Do not touch)
-GLfloat prevAirCraftTranslation[3];		// предыдущие координаты самолета						(Do not touch)
+GLushort torusScore = 0;			// Counter of collected rings
+GLushort viewMode = 2;				// ГўГЁГ¤ Г­Г  Г±Г Г¬Г®Г«ГҐГІ: Г®ГІ ГЄГ ГЎГЁГ­Г», Г± ГµГўГ®Г±ГІГ , ГЇГ® ГіГ¬Г®Г«Г·Г Г­ГЁГѕ
+GLfloat pointToFly[2];				// ГІГ®Г·ГЄГ , ГЄ ГЄГ®ГІГ®Г°Г®Г© Г¤Г®Г«Г¦ГҐГ­ Г«ГҐГІГҐГІГј Г±Г Г¬Г®Г«ГҐГІ
+GLfloat savedAnimationStatus;			// Г±Г®ГµГ°Г Г­ГїГҐГІ Г±ГІГ ГІГіГ± Г Г­ГЁГ¬Г Г¶ГЁГЁ
+GLboolean isControlSwitched = false;		// Г®ГЇГ°ГҐГ¤ГҐГ«ГҐГ­ГЁГҐ ГЇГҐГ°ГҐГЄГ«ГѕГ·ГҐГ­ГЁГї Г°ГҐГ¦ГЁГ¬Г  ГіГЇГ°Г ГўГ«ГҐГ­ГЁГї
+GLboolean isReadyToControl = true;		// ГіГўГҐГ¤Г®Г¬Г«ГїГҐГІ Г® ГЈГ®ГІГ®ГўГ­Г®Г±ГІГЁ ГЇГҐГ°ГҐГ¤Г ГІГј ГЄГ®Г­ГІГ°Г®Г«Гј
+GLboolean manualControl = false;		// Г°ГҐГ¦ГЁГ¬ ГіГЇГ°Г ГўГ«ГҐГ­ГЁГї Г±Г Г¬Г®Г«ГҐГІГ®Г¬
+GLfloat airCraftTranslation[3];			// ГІГҐГЄГіГ№ГЁГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ» Г±Г Г¬Г®Г«ГҐГІГ 
+GLfloat prevAirCraftTranslation[3];		// ГЇГ°ГҐГ¤Г»Г¤ГіГ№ГЁГҐ ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ» Г±Г Г¬Г®Г«ГҐГІГ 
 
 // Texture parameters
-GLushort textureId = 0;											// Texture id
-Texture airCraftTexture, moonTexture;							// Object textures
+GLushort textureId = 0;						// Texture id
+Texture airCraftTexture, moonTexture;				// Object textures
 GLuint textures[sizeof(textureNames) / sizeof(std::string)];	// Array of surface textures
 
 // Animation parameters
-GLfloat animationLightMoment;		// The time animation of the light
-GLfloat animationAirCraftMoment;	// The time animation of the aircraft
-GLfloat animationTranslationMoment;	// The time animation of the aircraft translation
+GLfloat animationLightMoment;			// The time animation of the light
+GLfloat animationAirCraftMoment;		// The time animation of the aircraft
+GLfloat animationTranslationMoment;		// The time animation of the aircraft translation
 
 // Additional animation params
-DWORD currentTick;		// Current tick
-DWORD previousTick;		// Previous tick
-GLfloat multiplier;		// Multiplier for the same animation speed at different FPS
+DWORD currentTick;	// Current tick
+DWORD previousTick;	// Previous tick
+GLfloat multiplier;	// Multiplier for the same animation speed at different FPS
 
 // FPS counter params
-GLuint FPS_counter;		// Counts frames
+GLuint FPS_counter;	// Counts frames
 GLuint FPS_timerStart;	// Calculates 1 second
-GLuint FPS_string;		// Write result
+GLuint FPS_string;	// Write result
 
 // Sound params
-HSTREAM streamHit;		// Hit sound stream
+HSTREAM streamHit;	// Hit sound stream
 HSTREAM streamMusic;	// Music stream
 
 // Store the old mouse coordinates
@@ -774,9 +774,9 @@ void diamondSquareAlgorithm_SquareStep(std::vector <std::vector <GLfloat>> *poin
 }
 
 void diamondSquareAlgorithm_DiamondStep(std::vector <std::vector <GLfloat>> *points,
-										GLint x, GLint y, GLint reach, BiomeParams biomeParams,
-										std::vector <GLfloat> rightSide_EndCoords,
-										std::vector <GLfloat> upperSide_EndCoords) {
+					GLint x, GLint y, GLint reach, BiomeParams biomeParams,
+					std::vector <GLfloat> rightSide_EndCoords,
+					std::vector <GLfloat> upperSide_EndCoords) {
 	if (!rightSide_EndCoords.empty()) (*points)[0][y] = rightSide_EndCoords[y];
 	if (!upperSide_EndCoords.empty()) (*points)[x][0] = upperSide_EndCoords[x];
 
@@ -804,9 +804,9 @@ void diamondSquareAlgorithm_DiamondStep(std::vector <std::vector <GLfloat>> *poi
 }
 
 void callDiamondSquareAlgorithm(std::vector <std::vector <GLfloat>> *points,
-								GLint size, BiomeParams biomeParams,
-								std::vector <GLfloat> rightSide_EndCoords,
-								std::vector <GLfloat> upperSide_EndCoords) {
+				GLint size, BiomeParams biomeParams,
+				std::vector <GLfloat> rightSide_EndCoords,
+				std::vector <GLfloat> upperSide_EndCoords) {
 	GLuint half = size / 2;
 	if (half < 1) return;
 
@@ -825,12 +825,12 @@ void callDiamondSquareAlgorithm(std::vector <std::vector <GLfloat>> *points,
 		if (column % 2 == 1) {
 			for (GLuint x = half; x < polygonNumberPerSide; x += size) {
 				diamondSquareAlgorithm_DiamondStep(points, y % polygonNumberPerSide, x % polygonNumberPerSide, half,
-												   biomeParams, rightSide_EndCoords, upperSide_EndCoords);
+									biomeParams, rightSide_EndCoords, upperSide_EndCoords);
 			}
 		} else {
 			for (GLuint x = 0; x < polygonNumberPerSide; x += size) {
 				diamondSquareAlgorithm_DiamondStep(points, y % polygonNumberPerSide, x % polygonNumberPerSide, half,
-												   biomeParams, rightSide_EndCoords, upperSide_EndCoords);
+									biomeParams, rightSide_EndCoords, upperSide_EndCoords);
 			}
 		}
 	}
@@ -879,7 +879,7 @@ void calculateBiome(Biome *biome) {
 				points.push_back(points_X);
 			}
 
-			// Связывание текущего чанка и биома с предыдущими
+			// Г‘ГўГїГ§Г»ГўГ Г­ГЁГҐ ГІГҐГЄГіГ№ГҐГЈГ® Г·Г Г­ГЄГ  ГЁ ГЎГЁГ®Г¬Г  Г± ГЇГ°ГҐГ¤Г»Г¤ГіГ№ГЁГ¬ГЁ
 			//============================================================================================
 			std::vector <GLfloat> prevBiome_upperSide_EndCoords =
 				isFirstBiome ? std::vector <GLfloat>() : biome->biome_EndCoords[jndex];
@@ -893,14 +893,14 @@ void calculateBiome(Biome *biome) {
 
 			if (!isFirstBiome && index == 0) {
 				callDiamondSquareAlgorithm(&points, polygonNumberPerSide, biome->biomeParams,
-										   prevChunk_rightSide_EndCoords, prevBiome_upperSide_EndCoords);
+								prevChunk_rightSide_EndCoords, prevBiome_upperSide_EndCoords);
 			} else {
 				callDiamondSquareAlgorithm(&points, polygonNumberPerSide, biome->biomeParams,
-										   prevChunk_rightSide_EndCoords, prevChunk_upperSide_EndCoords);
+								prevChunk_rightSide_EndCoords, prevChunk_upperSide_EndCoords);
 			}
 			//============================================================================================
 
-			// Сохранение высот правой и верхней границы чанка
+			// Г‘Г®ГµГ°Г Г­ГҐГ­ГЁГҐ ГўГ»Г±Г®ГІ ГЇГ°Г ГўГ®Г© ГЁ ГўГҐГ°ГµГ­ГҐГ© ГЈГ°Г Г­ГЁГ¶Г» Г·Г Г­ГЄГ 
 			//============================================================================================
 			std::vector <GLfloat> rightSide_EndCoords;
 			std::vector <GLfloat> upperSide_EndCoords;
@@ -911,7 +911,7 @@ void calculateBiome(Biome *biome) {
 			}
 			//============================================================================================
 
-			// Создание полигонов чанка
+			// Г‘Г®Г§Г¤Г Г­ГЁГҐ ГЇГ®Г«ГЁГЈГ®Г­Г®Гў Г·Г Г­ГЄГ 
 			//============================================================================================
 			std::vector <TriangularSquare_withNormals> chunkPolygons;
 			for (GLuint i = 0; i < polygonNumberPerSide - 1; i++) {
@@ -1299,7 +1299,7 @@ void myRender() {
 	translationController();
 
 	if (gameStarted) {
-	// При попадании в кольцо - оно удаляется из вектора, соответ. необходимо генерировать новое
+	// ГЏГ°ГЁ ГЇГ®ГЇГ Г¤Г Г­ГЁГЁ Гў ГЄГ®Г«ГјГ¶Г® - Г®Г­Г® ГіГ¤Г Г«ГїГҐГІГ±Гї ГЁГ§ ГўГҐГЄГІГ®Г°Г , Г±Г®Г®ГІГўГҐГІ. Г­ГҐГ®ГЎГµГ®Г¤ГЁГ¬Г® ГЈГҐГ­ГҐГ°ГЁГ°Г®ГўГ ГІГј Г­Г®ГўГ®ГҐ
 		int ringNeed = 20;
 		if (rings.size() != ringNeed) {
 			for (int i = 0; i < (ringNeed - rings.size()); i++) {
@@ -1313,7 +1313,7 @@ void myRender() {
 				float y = getRandomNumber(100.0, 500.0);
 				float z = maxHeight;
 
-				// Проверка на дистанцию, если рядом с сгенерируемой координатой в дистанции имеется объект - игнорим добавление 
+				// ГЏГ°Г®ГўГҐГ°ГЄГ  Г­Г  Г¤ГЁГ±ГІГ Г­Г¶ГЁГѕ, ГҐГ±Г«ГЁ Г°ГїГ¤Г®Г¬ Г± Г±ГЈГҐГ­ГҐГ°ГЁГ°ГіГҐГ¬Г®Г© ГЄГ®Г®Г°Г¤ГЁГ­Г ГІГ®Г© Гў Г¤ГЁГ±ГІГ Г­Г¶ГЁГЁ ГЁГ¬ГҐГҐГІГ±Гї Г®ГЎГєГҐГЄГІ - ГЁГЈГ­Г®Г°ГЁГ¬ Г¤Г®ГЎГ ГўГ«ГҐГ­ГЁГҐ 
 				bool distancePassed = true;
 				for (int i = 0; i < rings.size() && distancePassed; i++) {
 					Ring *ring = rings[i];
@@ -1324,7 +1324,7 @@ void myRender() {
 					}
 				}
 
-				// Также проверим чтобы спавн не происходил вблизи/за самолетом
+				// Г’Г ГЄГ¦ГҐ ГЇГ°Г®ГўГҐГ°ГЁГ¬ Г·ГІГ®ГЎГ» Г±ГЇГ ГўГ­ Г­ГҐ ГЇГ°Г®ГЁГ±ГµГ®Г¤ГЁГ« ГўГЎГ«ГЁГ§ГЁ/Г§Г  Г±Г Г¬Г®Г«ГҐГІГ®Г¬
 				float translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
 				float yPosReal = y - animationTranslationMoment * speed;
 				if (abs(airCraftTranslation[1] - yPosReal) < 100) distancePassed = false;
@@ -1337,7 +1337,7 @@ void myRender() {
 			}
 		}
 
-		// отрисовка колец
+		// Г®ГІГ°ГЁГ±Г®ГўГЄГ  ГЄГ®Г«ГҐГ¶
 		for (int i = 0; i < rings.size(); i++) {
 			Ring *ring = rings[i];
 			if (ring != NULL) {
@@ -1353,23 +1353,23 @@ void myRender() {
 		}
 
 		DWORD64 currentMseconds = GetTickCount64();
-		// проверка позиций колец
+		// ГЇГ°Г®ГўГҐГ°ГЄГ  ГЇГ®Г§ГЁГ¶ГЁГ© ГЄГ®Г«ГҐГ¶
 		for (int i = 0; i < rings.size(); i++) {
 			Ring *ring = rings[i];
 			if (ring != NULL) {
 				float translationSize = polygonNumberPerSide * polygonSize * visibleBiomeHeight - 2.0 * polygonSize;
 				float yPosReal = ring->y - animationTranslationMoment * ring->speed;
 				if (distance(ring->x, yPosReal, ring->z, airCraftTranslation[0], airCraftTranslation[1], airCraftTranslation[2]) < ring->size + 4) {
-					// дистанция очень близкая к самолету
-					// назначим кол-во милиссикунд после которого кольцо пропадет если это еще не сделано
+					// Г¤ГЁГ±ГІГ Г­Г¶ГЁГї Г®Г·ГҐГ­Гј ГЎГ«ГЁГ§ГЄГ Гї ГЄ Г±Г Г¬Г®Г«ГҐГІГі
+					// Г­Г Г§Г­Г Г·ГЁГ¬ ГЄГ®Г«-ГўГ® Г¬ГЁГ«ГЁГ±Г±ГЁГЄГіГ­Г¤ ГЇГ®Г±Г«ГҐ ГЄГ®ГІГ®Г°Г®ГЈГ® ГЄГ®Г«ГјГ¶Г® ГЇГ°Г®ГЇГ Г¤ГҐГІ ГҐГ±Г«ГЁ ГЅГІГ® ГҐГ№ГҐ Г­ГҐ Г±Г¤ГҐГ«Г Г­Г®
 					if (ring->deadMSeconds == -1) {
-						ring->deadMSeconds = currentMseconds + 1000; // через 1 сек после попадания - кольцо пропадет
+						ring->deadMSeconds = currentMseconds + 1000; // Г·ГҐГ°ГҐГ§ 1 Г±ГҐГЄ ГЇГ®Г±Г«ГҐ ГЇГ®ГЇГ Г¤Г Г­ГЁГї - ГЄГ®Г«ГјГ¶Г® ГЇГ°Г®ГЇГ Г¤ГҐГІ
 						BASS_ChannelPlay(streamHit, TRUE);
 						torusScore++;
 					}
 				}
 				if (ring->deadMSeconds <= currentMseconds) rings.erase(rings.begin() + i);
-				// Тут нужна проверка - если кольцо улетело далеко - его надо удалять из вектора, чтобы тот пополнялся новыми кольцами
+				// Г’ГіГІ Г­ГіГ¦Г­Г  ГЇГ°Г®ГўГҐГ°ГЄГ  - ГҐГ±Г«ГЁ ГЄГ®Г«ГјГ¶Г® ГіГ«ГҐГІГҐГ«Г® Г¤Г Г«ГҐГЄГ® - ГҐГЈГ® Г­Г Г¤Г® ГіГ¤Г Г«ГїГІГј ГЁГ§ ГўГҐГЄГІГ®Г°Г , Г·ГІГ®ГЎГ» ГІГ®ГІ ГЇГ®ГЇГ®Г«Г­ГїГ«Г±Гї Г­Г®ГўГ»Г¬ГЁ ГЄГ®Г«ГјГ¶Г Г¬ГЁ
 			}
 		}
 	}
@@ -1385,7 +1385,7 @@ void mouseEvent(OpenGL *ogl, GLint mouseCoord_X, GLint mouseCoord_Y) {
 		previousMouseCoord_X = mouseCoord_X;
 		previousMouseCoord_Y = mouseCoord_Y;
 
-		// Меняем углы камеры при нажатой правой кнопке мыши
+		// ГЊГҐГ­ГїГҐГ¬ ГіГЈГ«Г» ГЄГ Г¬ГҐГ°Г» ГЇГ°ГЁ Г­Г Г¦Г ГІГ®Г© ГЇГ°Г ГўГ®Г© ГЄГ­Г®ГЇГЄГҐ Г¬Г»ГёГЁ
 		if (OpenGL::isKeyPressed(VK_RBUTTON)) {
 			myCamera.cameraAngle_XY += 0.01f * dx;
 			myCamera.cameraAngle_Z += -0.01f * dy;
@@ -1492,12 +1492,12 @@ void keyUpEvent(OpenGL *ogl, GLint key) {
 void initRender(OpenGL *ogl) {
 	myInitRender();
 
-	// камеру и свет привязываем к "движку"
+	// ГЄГ Г¬ГҐГ°Гі ГЁ Г±ГўГҐГІ ГЇГ°ГЁГўГїГ§Г»ГўГ ГҐГ¬ ГЄ "Г¤ГўГЁГ¦ГЄГі"
 	ogl->mainCamera = &myCamera;
 	ogl->mainLight = &myLight;
 
-	glEnable(GL_NORMALIZE);						// нормализация нормалей
-	glEnable(GL_LINE_SMOOTH);					// устранение ступенчатости для линий
+	glEnable(GL_NORMALIZE);						// Г­Г®Г°Г¬Г Г«ГЁГ§Г Г¶ГЁГї Г­Г®Г°Г¬Г Г«ГҐГ©
+	glEnable(GL_LINE_SMOOTH);					// ГіГ±ГІГ°Г Г­ГҐГ­ГЁГҐ Г±ГІГіГЇГҐГ­Г·Г ГІГ®Г±ГІГЁ Г¤Г«Гї Г«ГЁГ­ГЁГ©
 	glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, 0);
 
 	glFogi(GL_FOG_MODE, GL_LINEAR);
@@ -1508,16 +1508,16 @@ void initRender(OpenGL *ogl) {
 void drawMessage(OpenGL *ogl) {
 	glCullFace(GL_FRONT);
 
-	// Сообщение вверху экрана
-	glMatrixMode(GL_PROJECTION);	// Делаем активной матрицу проекций. 
-									// (всек матричные операции, будут ее видоизменять.)
-	glPushMatrix();		// сохраняем текущую матрицу проецирования (которая описывает перспективную проекцию) в стек 				    
-	glLoadIdentity();	// Загружаем единичную матрицу
-	glOrtho(0.0f, ogl->getWidth(), 0.0f, ogl->getHeight(), 0.0f, 1.0f);	// врубаем режим ортогональной проекции
+	// Г‘Г®Г®ГЎГ№ГҐГ­ГЁГҐ ГўГўГҐГ°ГµГі ГЅГЄГ°Г Г­Г 
+	glMatrixMode(GL_PROJECTION);	// Г„ГҐГ«Г ГҐГ¬ Г ГЄГІГЁГўГ­Г®Г© Г¬Г ГІГ°ГЁГ¶Гі ГЇГ°Г®ГҐГЄГ¶ГЁГ©. 
+					// (ГўГ±ГҐГЄ Г¬Г ГІГ°ГЁГ·Г­Г»ГҐ Г®ГЇГҐГ°Г Г¶ГЁГЁ, ГЎГіГ¤ГіГІ ГҐГҐ ГўГЁГ¤Г®ГЁГ§Г¬ГҐГ­ГїГІГј.)
+	glPushMatrix();			// Г±Г®ГµГ°Г Г­ГїГҐГ¬ ГІГҐГЄГіГ№ГіГѕ Г¬Г ГІГ°ГЁГ¶Гі ГЇГ°Г®ГҐГ¶ГЁГ°Г®ГўГ Г­ГЁГї (ГЄГ®ГІГ®Г°Г Гї Г®ГЇГЁГ±Г»ГўГ ГҐГІ ГЇГҐГ°Г±ГЇГҐГЄГІГЁГўГ­ГіГѕ ГЇГ°Г®ГҐГЄГ¶ГЁГѕ) Гў Г±ГІГҐГЄ 				    
+	glLoadIdentity();		// Г‡Г ГЈГ°ГіГ¦Г ГҐГ¬ ГҐГ¤ГЁГ­ГЁГ·Г­ГіГѕ Г¬Г ГІГ°ГЁГ¶Гі
+	glOrtho(0.0f, ogl->getWidth(), 0.0f, ogl->getHeight(), 0.0f, 1.0f);	// ГўГ°ГіГЎГ ГҐГ¬ Г°ГҐГ¦ГЁГ¬ Г®Г°ГІГ®ГЈГ®Г­Г Г«ГјГ­Г®Г© ГЇГ°Г®ГҐГЄГ¶ГЁГЁ
 
-	glMatrixMode(GL_MODELVIEW);	// переключаемся на модел-вью матрицу
-	glPushMatrix();				// сохраняем текущую матрицу в стек (положение камеры, фактически)
-	glLoadIdentity();			// сбрасываем ее в дефолт
+	glMatrixMode(GL_MODELVIEW);	// ГЇГҐГ°ГҐГЄГ«ГѕГ·Г ГҐГ¬Г±Гї Г­Г  Г¬Г®Г¤ГҐГ«-ГўГјГѕ Г¬Г ГІГ°ГЁГ¶Гі
+	glPushMatrix();			// Г±Г®ГµГ°Г Г­ГїГҐГ¬ ГІГҐГЄГіГ№ГіГѕ Г¬Г ГІГ°ГЁГ¶Гі Гў Г±ГІГҐГЄ (ГЇГ®Г«Г®Г¦ГҐГ­ГЁГҐ ГЄГ Г¬ГҐГ°Г», ГґГ ГЄГІГЁГ·ГҐГ±ГЄГЁ)
+	glLoadIdentity();		// Г±ГЎГ°Г Г±Г»ГўГ ГҐГ¬ ГҐГҐ Гў Г¤ГҐГґГ®Г«ГІ
 
 	glDisable(GL_LIGHTING);
 
@@ -1607,26 +1607,26 @@ void drawMessage(OpenGL *ogl) {
 			break;
 	}
 
-	std::string manualStatus = manualControl ? " [вкл]" : " [выкл]";
-	std::string musicStatus = isMusicStoped ? " [выключена]" : " [включена]";
-	ss << "Колец собрано: " << torusScore << std::endl;
-	ss << "M - вкл/выкл музыку" << musicStatus << std::endl;
-	ss << "A - вкл/выкл режима пилота" << manualStatus << std::endl << std::endl;
-	ss << "1 - вид от кабины пилота" << std::endl;
-	ss << "2 - вид за самолетом" << std::endl;
-	ss << "3 - закрепленный вид" << std::endl << std::endl;
+	std::string manualStatus = manualControl ? " [ГўГЄГ«]" : " [ГўГ»ГЄГ«]";
+	std::string musicStatus = isMusicStoped ? " [ГўГ»ГЄГ«ГѕГ·ГҐГ­Г ]" : " [ГўГЄГ«ГѕГ·ГҐГ­Г ]";
+	ss << "ГЉГ®Г«ГҐГ¶ Г±Г®ГЎГ°Г Г­Г®: " << torusScore << std::endl;
+	ss << "M - ГўГЄГ«/ГўГ»ГЄГ« Г¬ГіГ§Г»ГЄГі" << musicStatus << std::endl;
+	ss << "A - ГўГЄГ«/ГўГ»ГЄГ« Г°ГҐГ¦ГЁГ¬Г  ГЇГЁГ«Г®ГІГ " << manualStatus << std::endl << std::endl;
+	ss << "1 - ГўГЁГ¤ Г®ГІ ГЄГ ГЎГЁГ­Г» ГЇГЁГ«Г®ГІГ " << std::endl;
+	ss << "2 - ГўГЁГ¤ Г§Г  Г±Г Г¬Г®Г«ГҐГІГ®Г¬" << std::endl;
+	ss << "3 - Г§Г ГЄГ°ГҐГЇГ«ГҐГ­Г­Г»Г© ГўГЁГ¤" << std::endl << std::endl;
 
 	if (operatorMode) {
-		std::string textureStatus = textureMode ? " [вкл]" : " [выкл]";
-		std::string fogStatus = fogMode ? " [вкл]" : " [выкл]";
-		std::string lightStatus = lightMode ? " [вкл]" : " [выкл]";
-		std::string lightLockStatus = lightLockMode ? " [вкл]" : " [выкл]";
+		std::string textureStatus = textureMode ? " [ГўГЄГ«]" : " [ГўГ»ГЄГ«]";
+		std::string fogStatus = fogMode ? " [ГўГЄГ«]" : " [ГўГ»ГЄГ«]";
+		std::string lightStatus = lightMode ? " [ГўГЄГ«]" : " [ГўГ»ГЄГ«]";
+		std::string lightLockStatus = lightLockMode ? " [ГўГЄГ«]" : " [ГўГ»ГЄГ«]";
 
-		ss << "РЕЖИМ ОПЕРАТОРА" << std::endl << std::endl;
-		ss << "T - вкл/выкл текстур" << textureStatus << std::endl;
-		ss << "F - вкл/выкл туман" << fogStatus << std::endl;
-		ss << "L - вкл/выкл освещение" << lightStatus << std::endl;
-		ss << "J - блокировка смены суток" << lightLockStatus << std::endl << std::endl;
+		ss << "ГђГ…Г†Г€ГЊ ГЋГЏГ…ГђГЂГ’ГЋГђГЂ" << std::endl << std::endl;
+		ss << "T - ГўГЄГ«/ГўГ»ГЄГ« ГІГҐГЄГ±ГІГіГ°" << textureStatus << std::endl;
+		ss << "F - ГўГЄГ«/ГўГ»ГЄГ« ГІГіГ¬Г Г­" << fogStatus << std::endl;
+		ss << "L - ГўГЄГ«/ГўГ»ГЄГ« Г®Г±ГўГҐГ№ГҐГ­ГЁГҐ" << lightStatus << std::endl;
+		ss << "J - ГЎГ«Г®ГЄГЁГ°Г®ГўГЄГ  Г±Г¬ГҐГ­Г» Г±ГіГІГ®ГЄ" << lightLockStatus << std::endl << std::endl;
 		
 		ss << "animationTranslationMoment: " << animationTranslationMoment << std::endl;
 		ss << "animationLightMoment: " << animationLightMoment << std::endl;
@@ -1659,7 +1659,7 @@ void drawMessage(OpenGL *ogl) {
 	rec.setText(ss.str().c_str());
 	rec.Draw();
 
-	glMatrixMode(GL_PROJECTION); // восстанавливаем матрицы проекции и модел-вью обратьно из стека.
+	glMatrixMode(GL_PROJECTION); // ГўГ®Г±Г±ГІГ Г­Г ГўГ«ГЁГўГ ГҐГ¬ Г¬Г ГІГ°ГЁГ¶Г» ГЇГ°Г®ГҐГЄГ¶ГЁГЁ ГЁ Г¬Г®Г¤ГҐГ«-ГўГјГѕ Г®ГЎГ°Г ГІГјГ­Г® ГЁГ§ Г±ГІГҐГЄГ .
 	glPopMatrix();
 
 	glMatrixMode(GL_MODELVIEW);
@@ -1673,7 +1673,7 @@ void Render(OpenGL *ogl) {
 	lightMode ? glEnable(GL_LIGHTING) : glDisable(GL_LIGHTING);
 	textureMode ? glEnable(GL_TEXTURE_2D) : glDisable(GL_TEXTURE_2D);
 
-	// Чтоб было красиво, без квадратиков (сглаживание освещения)
+	// Г—ГІГ®ГЎ ГЎГ»Г«Г® ГЄГ°Г Г±ГЁГўГ®, ГЎГҐГ§ ГЄГўГ Г¤Г°Г ГІГЁГЄГ®Гў (Г±ГЈГ«Г Г¦ГЁГўГ Г­ГЁГҐ Г®Г±ГўГҐГ№ГҐГ­ГЁГї)
 	glShadeModel(GL_SMOOTH);
 	//===================================
 	myRender();
